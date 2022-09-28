@@ -8,7 +8,7 @@ class Users(db.Model):
     email = db.Column(db.String(100), unique=True)
     pwd = db.Column(db.String(40))
     token = db.Column(db.String(43), nullable=True)
-    houses = db.relationship("Houses", backref="houses", lazy=True)
+    houses = db.relationship("House", backref="houses", lazy=True)
 
     @staticmethod
     def gen_id():
@@ -20,7 +20,7 @@ class Users(db.Model):
         self.email = email
         self.pwd = pwd
     
-class Houses(db.Model):
+class House(db.Model):
     __tablename__ = "houses"
     id = db.Column(db.String(32), primary_key=True)
     users_id = db.Column(db.String(32), db.ForeignKey("users.id"))
