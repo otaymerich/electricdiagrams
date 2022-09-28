@@ -46,8 +46,8 @@ class House(db.Model):
     domotics = db.Column(db.Boolean)
     elec_car = db.Column(db.Boolean)
     solar_panels = db.Column(db.Boolean)
-    climate_outdoor_unit = db.Column(db.Interger, nullable=True)
-    climate_indoor_unit = db.Column(db.Interger, nullable=True)
+    climate_outdoor_unit = db.Column(db.Integer, nullable=True)
+    climate_indoor_unit = db.Column(db.Integer, nullable=True)
 
 
     @staticmethod
