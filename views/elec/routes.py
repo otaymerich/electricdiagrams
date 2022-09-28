@@ -21,7 +21,7 @@ LOGIN/LOGOUT
 def t_login():
     if request.method == "POST":
         rf = request.form
-        new_user = Users(rf["name"], rf["email"], rf["pwd"])
+        new_user = Users(rf["name"], rf["email"], Auth.encrypt_psw(rf["pwd"]))
         db.session.add(new_user)
         db.session.commit()
     return render_template("login.html")
