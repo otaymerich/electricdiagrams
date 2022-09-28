@@ -10,14 +10,13 @@ class Users(db.Model):
     pwd = db.Column(db.String(40))
     token = db.Column(db.String(43), nullable=True)
 
-    # def __init__(self, id: str, name: str, email: str):
-    #     self.id = id
-    #     self.name = name
-    #     self.email = email
-    
     @staticmethod
     def gen_id():
         return uuid4().hex
 
-    def add_user(name: str, email: str, pwd: str):
-        return Users(id=Users.gen_id(), name=name, email=email, pwd=pwd)
+    def __init__(self, name: str, email: str, pwd: str):
+        self.id = self.gen_id()
+        self.name = name
+        self.email = email
+        self.pwd = pwd
+    

@@ -19,14 +19,17 @@ LOGIN/LOGOUT
 @elec.route("/login", methods=["GET", "POST"])
 @test_auth.login_check
 def t_login():
+    if request.method == "POST":
+        rf = request.form
+        new_user = Users(rf["name"], rf["email"], rf["pwd"])
+        db.session.add(new_user)
+        db.session.commit()
     return render_template("login.html")
 
 @elec.route("/logout")
 def log_out():
     session.clear()
     return redirect(url_for("elec.t_login"))
-
-
 
 @elec.route("/test")
 def t_test():
