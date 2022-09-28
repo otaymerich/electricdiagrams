@@ -25,7 +25,7 @@ class House(db.Model):
     id = db.Column(db.String(32), primary_key=True)
     users_id = db.Column(db.String(32), db.ForeignKey("users.id"))
     proj_title = db.Column(db.String(20), unique=True)
-    address = db.Column(db.String(43), nullable=False)
+    address = db.Column(db.String, nullable=False)
     m2 = db.Column(db.Float, nullable=False)
     floors = db.Column(db.Integer)
     pool = db.Column(db.Boolean)
