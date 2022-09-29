@@ -1,0 +1,188 @@
+{%extends "base.html"%}
+
+{%block main%}
+<form method="POST">
+  <!-- Project info -->
+  <div class="mb-3">
+    <h3 class="form-label">Project information</h3>
+  </div>
+  <div class="mb-3">
+      <label for="proj_title" class="form-label">Project title</label>
+      <input type="text" class="form-control" name="proj_title" id="proj_title" placeholder="Title of your project" required>
+  </div>
+  <div class="mb-3">
+    <label for="inputAddress" class="form-label">Address</label>
+    <input type="text" class="form-control" id="inputAddress" name="address" placeholder="Ronda Ferran Puig, 1, Girona" required>
+  </div>
+  <div class="container mb-5">
+    <div class = "row">
+      <div class="col-sm">
+        <label for="m2" class="form-label">Total Square Meters</label>
+        <input type="number" min="0" step="0.5" class="form-control" name="m2" id="m2" required>
+      </div>
+      <div class="col-sm">
+        <label for="floors" class="form-label">Floors</label>
+        <input type="number" min="0" max="3" step="1" class="form-control" name="floors" id="floors" required>
+      </div>
+    </div>
+  </div>
+  <!-- Installations description -->
+  <div class="mb-3">
+    <h3 class="form-label">Installations description</h3>
+    <label class="form-label">Describe your house installations, choose the elements you want to have an specific protecction for</label>
+  </div>
+  <div class="mb-3">
+    <label for="floors" class="form-label fw-bold">Heating system</label>
+    <select id= "inputHeating" class="form-select" name="heating_system" aria-label="Default select example">
+      <option value="Boiler">Boiler</option>
+      <option value="Aerothermia">Aerothermia</option>
+      <option value="Electric heater">Electric heater </option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label fw-bold">Kitchen Installations:</label>
+    <div class="form-check">
+      <label class="form-check-label" for="KitchenFridge">
+      <input class="form-check-input" type="checkbox" value="true" id="KitchenFridge" name="fridge">
+        Fridge
+      </label>
+    </div>
+    <!-- <div class="form-check">
+      <label class="form-check-label" for="KitchenFreezer">
+      <input class="form-check-input" type="checkbox" value="" id="KitchenFreezer" name="freezer">
+        Freezer
+      </label>
+    </div>
+    <div class="form-check">
+      <label class="form-check-label" for="KitchenOven">
+      <input class="form-check-input" type="checkbox" value="False" id="KitchenOven" name="oven">
+        Oven
+      </label>
+    </div>
+    <div class="form-check">
+      <label class="form-check-label" for="KitchenVitro">
+      <input class="form-check-input" type="checkbox" value="False" id="KitchenVitro" name="vitro_hub">
+        Vitroceramic Hub
+      </label>
+    </div>
+    <div class="form-check">
+      <label class="form-check-label" for="KitchenDishwasher">
+      <input class="form-check-input" type="checkbox" value="False" id="KitchenDishwasher" name="dishwasher">
+        Dishwasher
+      </label>
+    </div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label fw-bold">Cleaning Room Installations:</label>
+    <div class="form-check">
+      <label class="form-check-label" for="CleaningWashMachine">
+      <input class="form-check-input" type="checkbox" value="False" id="CleaningWashMachine" name="wash_machine">
+        Washing Machine
+      </label>
+    </div>
+    <div class="form-check">
+      <label class="form-check-label" for="CleaningDryer">
+      <input class="form-check-input" type="checkbox" value="False" id="CleaningDryer" name="dryer">
+        Dryer
+      </label>
+    </div>
+    <div class="form-check">
+      <label class="form-check-label" for="CleaningIron">
+      <input class="form-check-input" type="checkbox" value="False" id="CleaningIron" name="iron">
+        Iron
+      </label>
+    </div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label fw-bold">Do you have AC system?</label>
+  </div>
+  <div class="mb-3">
+    <input type="checkbox" class="form-check-input" id="has_air" aria-describedby="dateHelp" onclick="show_air()">
+    <label for="exampleInputEmail1" class="form-check-label">Yes/No</label>
+  </div>
+  <div class="container mb-3" id="climate_units" style="display: none;">
+    <div class = "row">
+      <div class="col-sm">
+        <label for="ou" class="form-label">Climate outdoor units</label>
+        <input type="number" min="0" step="1" class="form-control" id="ou" name="out_units" required>
+      </div>
+      <div class="col-sm">
+        <label for="iu" class="form-label">Climate indoor units</label>
+        <input type="number" min="0" step="1" class="form-control" id="iu" name="in_units" required>
+      </div>
+    </div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label fw-bold">Other equipment:</label>
+    <div class="form-check">
+      <label class="form-check-label" for="OtherAlarm">
+      <input class="form-check-input" type="checkbox" value="" id="OtherAlarm" name="alarm">
+        Alarm System
+      </label>
+    </div>
+    <div class="form-check">
+      <label class="form-check-label" for="OtherElectronics">
+      <input class="form-check-input" type="checkbox" value="" id="OtherElectronics" name="electronics">
+        Electronics/TV
+      </label>
+    </div>
+    <div class="form-check">
+      <label class="form-check-label" for="OtherDomotics">
+      <input class="form-check-input" type="checkbox" value="" id="OtherDomotics" name="domotics">
+        Domotics
+      </label>
+    </div>
+    <div class="form-check">
+      <label class="form-check-label" for="OtherElecCar">
+      <input class="form-check-input" type="checkbox" value="" id="OtherElecCar" name="elec_car">
+        Electric Car Charger
+      </label>
+    </div>
+    <div class="form-check">
+      <label class="form-check-label" for="OtherSolarPanels">
+      <input class="form-check-input" type="checkbox" value="" id="OtherSolarPanels" name="solar_panels">
+        Solar Panels
+      </label>
+    </div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label fw-bold">Do you have a Swimming pool?</label>
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="pool" name="pool">
+        <label class="form-check-label" for="pool">Activate in case you have a swimming pool</label>
+      </div>        
+  </div>
+  <div class="mb-3">
+    <label class="form-label fw-bold">Do you have house yard?</label>
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="garden" name="garden">
+        <label class="form-check-label" for="garden">Activate in case you have house yard</label>
+      </div>        
+  </div>-->
+  <div class="mb-3">
+    <button type="submit" class="btn btn-primary">Create house project</button>
+  </div>
+</form>
+
+
+<script>
+  function show_air() {
+    const checkbox = document.querySelector("#has_air");
+    const out_units = document.querySelector("#out_units");
+    const in_units = document.querySelector("#in_units");
+    const climate_units = document.querySelector("#climate_units");
+
+    if (checkbox.checked) {
+      climate_units.style.display = "block";
+      out_units.required = true;
+      in_units.required = true;
+    }
+    else {
+      climate_units.style.display = "none";
+      out_units.required = false;
+      in_units.required = false;
+    };
+  };
+</script>
+
+{%endblock%}
