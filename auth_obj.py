@@ -37,7 +37,6 @@ class Auth:
         @wraps(func)
         def inner(*args):
             if self.request.method == "POST":
-                print(self.request.form)
                 user_email = self.request.form["email"]
                 user_pwd = self.encrypt_psw(self.request.form["pwd"])
                 user = self.users.query.filter_by(email=user_email).first()
