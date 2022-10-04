@@ -1,5 +1,5 @@
 from email import message
-from flask import Blueprint, render_template, request, session, redirect, url_for
+from flask import Blueprint, render_template, request, session, redirect, url_for, make_response
 from auth_obj import Auth
 from views.elec.models import db, Users, House
 
@@ -57,7 +57,9 @@ def t_show_projects():
 @elec.route("/logout")
 def log_out():
     session.clear()
-    return redirect(url_for("elec.t_login"))
+    res = make_response(redirect(url_for("elec.t_login")))
+    res.delete_cookie("name")
+    return res
 
 @elec.route("/test")
 def t_test():

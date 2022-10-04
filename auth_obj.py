@@ -1,6 +1,6 @@
 from functools import wraps
 from hashlib import sha1
-from flask import redirect, url_for, render_template
+from flask import redirect, url_for, render_template, make_response
 from secrets import token_urlsafe
 
 SECRET_KEY = "ELECdiagrams"
@@ -48,7 +48,9 @@ class Auth:
                         self.session["token"] = user.token
                         self.db.session.add(user)
                         self.db.session.commit()
-                        return redirect(url_for(self.home_url))
+                        res = make_response(redirect(url_for(self.home_url)))
+                        res.set_cookie("name", user.name)
+                        return res
                 return render_template("login.html", message="**User or password incorrect**")    
             return func(*args)
         return inner
