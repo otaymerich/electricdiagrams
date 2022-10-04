@@ -36,12 +36,15 @@ def t_login():
 def t_new_project():
     if request.method == "POST":
         rf = request.form
+        print
         new_house = {}
-        form_values = ["proj_title", "address",  "m2", "floors", "pool", "garden", "fridge", "freezer", "oven", "vitro_hub", "wash_machine", "dryer", "iron", "climate_outdoor_unit", "climate_indoor_unit", "alarm", "electronics", "domotics", "elec_car", "solar_panels"]
+        form_values = ["proj_title", "address",  "m2", "floors", "heating_system", "pool", "garden", "fridge", "freezer", "oven", "vitro_hub", "dishwasher", "wash_machine", "dryer", "iron", "climate_outdoor_unit", "climate_indoor_unit", "alarm", "electronics", "domotics", "elec_car", "solar_panels"]
         for name in form_values:
-            new_house[name] = rf.get(name) if rf.get(name) else None
-        new_house = (*dict(rf).values(),)
+            new_house[name] = True if rf.get(name)=="True" else rf.get(name)
         print(new_house)
+        house = House(session.get("id"), new_house)
+        db.session.add(house)
+        db.session.commit()
     return render_template("new_project.html")
 
 
@@ -52,6 +55,7 @@ def log_out():
 
 @elec.route("/test")
 def t_test():
+    print(session.get("id"))
     # user = Users.add_user("test1", "test1@email.com", "1234")
     # db.session.add(user)
     # db.session.commit()

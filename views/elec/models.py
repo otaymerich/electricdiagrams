@@ -23,7 +23,7 @@ class Users(db.Model):
 class House(db.Model):
     __tablename__ = "houses"
     id = db.Column(db.String(32), primary_key=True)
-    users_id = db.Column(db.String(32), db.ForeignKey("users.id"))
+    user_id = db.Column(db.String(32), db.ForeignKey("users.id"))
     proj_title = db.Column(db.String(20), unique=True)
     address = db.Column(db.String, nullable=False)
     m2 = db.Column(db.Float, nullable=False)
@@ -52,29 +52,29 @@ class House(db.Model):
     def gen_id():
         return uuid4().hex
 
-    def __init__(self, user_id: str, proj_title: str, address: str, m2: float, floors: int, pool: bool, garden: bool, fridge: bool, freezer: bool, oven: bool, vitro_hub: bool, dishwasher: bool, heating_system: str, wash_machine: bool, dryer: bool, iron: bool, alarm: bool, electronics: bool, domotics: bool, elec_car: bool, solar_panels: bool, climate_outdoor_unit=None, climate_indoor_unit=None):
+    def __init__(self, user_id: str, new_house: dict):
         self.id = self.gen_id()
         self.user_id = user_id
-        self.proj_title = proj_title
-        self.address = address
-        self.m2 = m2
-        self.floors = floors
-        self.pool = pool
-        self.garden = garden
-        self.fridge = fridge
-        self.freezer = freezer
-        self.oven = oven
-        self.vitro_hub = vitro_hub
-        self.dishwasher = dishwasher
-        self.heating_system = heating_system
-        self.wash_machine = wash_machine
-        self.dryer = dryer
-        self.iron = iron
-        self.alarm = alarm
-        self.electronics = electronics
-        self.domotics = domotics
-        self.elec_car = elec_car
-        self.solar_panels = solar_panels
-        self.climate_outdoor_unit = climate_outdoor_unit
-        self.climate_indoor_unit = climate_indoor_unit
+        self.proj_title = new_house["proj_title"]
+        self.address = new_house["address"]
+        self.m2 = new_house["m2"]
+        self.floors = new_house["floors"]
+        self.pool = new_house["pool"]
+        self.garden = new_house["garden"]
+        self.fridge = new_house["fridge"]
+        self.freezer = new_house["freezer"]
+        self.oven = new_house["oven"]
+        self.vitro_hub = new_house["vitro_hub"]
+        self.dishwasher = new_house["dishwasher"]
+        self.heating_system = new_house["heating_system"]
+        self.wash_machine = new_house["wash_machine"]
+        self.dryer = new_house["dryer"]
+        self.iron = new_house["iron"]
+        self.alarm = new_house["alarm"]
+        self.electronics = new_house["electronics"]
+        self.domotics = new_house["domotics"]
+        self.elec_car = new_house["elec_car"]
+        self.solar_panels = new_house["solar_panels"]
+        self.climate_outdoor_unit = new_house["climate_outdoor_unit"]
+        self.climate_indoor_unit = new_house["climate_indoor_unit"]
 
