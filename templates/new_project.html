@@ -43,31 +43,31 @@
     <label class="form-label fw-bold">Kitchen Installations:</label>
     <div class="form-check">
       <label class="form-check-label" for="KitchenFridge">
-      <input class="form-check-input" type="checkbox" value="true" id="KitchenFridge" name="fridge">
+      <input class="form-check-input" type="checkbox" value="True" id="KitchenFridge" name="fridge">
         Fridge
       </label>
     </div>
-    <!-- <div class="form-check">
+    <div class="form-check">
       <label class="form-check-label" for="KitchenFreezer">
-      <input class="form-check-input" type="checkbox" value="" id="KitchenFreezer" name="freezer">
+      <input class="form-check-input" type="checkbox" value="True" id="KitchenFreezer" name="freezer">
         Freezer
       </label>
     </div>
     <div class="form-check">
       <label class="form-check-label" for="KitchenOven">
-      <input class="form-check-input" type="checkbox" value="False" id="KitchenOven" name="oven">
+      <input class="form-check-input" type="checkbox" value="True" id="KitchenOven" name="oven">
         Oven
       </label>
     </div>
     <div class="form-check">
       <label class="form-check-label" for="KitchenVitro">
-      <input class="form-check-input" type="checkbox" value="False" id="KitchenVitro" name="vitro_hub">
+      <input class="form-check-input" type="checkbox" value="True" id="KitchenVitro" name="vitro_hub">
         Vitroceramic Hub
       </label>
     </div>
     <div class="form-check">
       <label class="form-check-label" for="KitchenDishwasher">
-      <input class="form-check-input" type="checkbox" value="False" id="KitchenDishwasher" name="dishwasher">
+      <input class="form-check-input" type="checkbox" value="True" id="KitchenDishwasher" name="dishwasher">
         Dishwasher
       </label>
     </div>
@@ -76,19 +76,19 @@
     <label class="form-label fw-bold">Cleaning Room Installations:</label>
     <div class="form-check">
       <label class="form-check-label" for="CleaningWashMachine">
-      <input class="form-check-input" type="checkbox" value="False" id="CleaningWashMachine" name="wash_machine">
+      <input class="form-check-input" type="checkbox" value="True" id="CleaningWashMachine" name="wash_machine">
         Washing Machine
       </label>
     </div>
     <div class="form-check">
       <label class="form-check-label" for="CleaningDryer">
-      <input class="form-check-input" type="checkbox" value="False" id="CleaningDryer" name="dryer">
+      <input class="form-check-input" type="checkbox" value="True" id="CleaningDryer" name="dryer">
         Dryer
       </label>
     </div>
     <div class="form-check">
       <label class="form-check-label" for="CleaningIron">
-      <input class="form-check-input" type="checkbox" value="False" id="CleaningIron" name="iron">
+      <input class="form-check-input" type="checkbox" value="True" id="CleaningIron" name="iron">
         Iron
       </label>
     </div>
@@ -96,19 +96,19 @@
   <div class="mb-3">
     <label class="form-label fw-bold">Do you have AC system?</label>
   </div>
-  <div class="mb-3">
+  <!-- <div class="mb-3">
     <input type="checkbox" class="form-check-input" id="has_air" aria-describedby="dateHelp" onclick="show_air()">
     <label for="exampleInputEmail1" class="form-check-label">Yes/No</label>
-  </div>
-  <div class="container mb-3" id="climate_units" style="display: none;">
+  </div> -->
+  <div class="container mb-3" id="climate_units">
     <div class = "row">
       <div class="col-sm">
         <label for="ou" class="form-label">Climate outdoor units</label>
-        <input type="number" min="0" step="1" class="form-control" id="ou" name="out_units" required>
+        <input type="number" min="0" step="1" class="form-control" id="ou" name="climate_outdoor_unit" required>
       </div>
       <div class="col-sm">
         <label for="iu" class="form-label">Climate indoor units</label>
-        <input type="number" min="0" step="1" class="form-control" id="iu" name="in_units" required>
+        <input type="number" min="0" step="1" class="form-control" id="iu" name="climate_indoor_unit" required>
       </div>
     </div>
   </div>
@@ -116,31 +116,31 @@
     <label class="form-label fw-bold">Other equipment:</label>
     <div class="form-check">
       <label class="form-check-label" for="OtherAlarm">
-      <input class="form-check-input" type="checkbox" value="" id="OtherAlarm" name="alarm">
+      <input class="form-check-input" type="checkbox" value="True" id="OtherAlarm" name="alarm">
         Alarm System
       </label>
     </div>
     <div class="form-check">
       <label class="form-check-label" for="OtherElectronics">
-      <input class="form-check-input" type="checkbox" value="" id="OtherElectronics" name="electronics">
+      <input class="form-check-input" type="checkbox" value="True" id="OtherElectronics" name="electronics">
         Electronics/TV
       </label>
     </div>
     <div class="form-check">
       <label class="form-check-label" for="OtherDomotics">
-      <input class="form-check-input" type="checkbox" value="" id="OtherDomotics" name="domotics">
+      <input class="form-check-input" type="checkbox" value="True" id="OtherDomotics" name="domotics">
         Domotics
       </label>
     </div>
     <div class="form-check">
       <label class="form-check-label" for="OtherElecCar">
-      <input class="form-check-input" type="checkbox" value="" id="OtherElecCar" name="elec_car">
+      <input class="form-check-input" type="checkbox" value="True" id="OtherElecCar" name="elec_car">
         Electric Car Charger
       </label>
     </div>
     <div class="form-check">
       <label class="form-check-label" for="OtherSolarPanels">
-      <input class="form-check-input" type="checkbox" value="" id="OtherSolarPanels" name="solar_panels">
+      <input class="form-check-input" type="checkbox" value="True" id="OtherSolarPanels" name="solar_panels">
         Solar Panels
       </label>
     </div>
@@ -150,15 +150,15 @@
       <div class="form-check form-switch">
         <input class="form-check-input" type="checkbox" role="switch" id="pool" name="pool">
         <label class="form-check-label" for="pool">Activate in case you have a swimming pool</label>
-      </div>        
+      </div>
   </div>
   <div class="mb-3">
     <label class="form-label fw-bold">Do you have house yard?</label>
       <div class="form-check form-switch">
         <input class="form-check-input" type="checkbox" role="switch" id="garden" name="garden">
         <label class="form-check-label" for="garden">Activate in case you have house yard</label>
-      </div>        
-  </div>-->
+      </div>
+  </div>
   <div class="mb-3">
     <button type="submit" class="btn btn-primary">Create house project</button>
   </div>

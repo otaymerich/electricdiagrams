@@ -1,3 +1,4 @@
+from email import message
 from flask import Blueprint, render_template, request, session, redirect, url_for
 from auth_obj import Auth
 from views.elec.models import db, Users, House
@@ -21,9 +22,13 @@ LOGIN/LOGOUT
 def t_login():
     if request.method == "POST":
         rf = request.form
-        new_user = Users(rf["name"], rf["email"], Auth.encrypt_psw(rf["pwd"]))
-        db.session.add(new_user)
-        db.session.commit()
+        email = Users.query.filter_by(email=rf["email"]).first()
+        if not email:
+            new_user = Users(rf["name"], rf["email"], Auth.encrypt_psw(rf["pwd"]))
+            db.session.add(new_user)
+            db.session.commit()
+        else:
+            return render_template("login.html", message="**The user you tryed to create already exists**")
     return render_template("login.html")
 
 @elec.route("/newproject", methods=["GET", "POST"])
@@ -31,29 +36,10 @@ def t_login():
 def t_new_project():
     if request.method == "POST":
         rf = request.form
-        new_house = (session["id"],
-                    rf.get("proj_title"),
-                    rf.get("address"),
-                    rf.get("m2"),
-                    rf.get("floors"),
-                    # rf.get("pool"),
-                    # rf.get("garden"),
-                    rf.get("fridge"),
-                    # rf.get("freezer"),
-                    # rf.get("oven"),
-                    # rf.get("vitro_hub"),
-                    # rf.get("heating_system"),
-                    # rf.get(rf.get("wash_machine"),
-                    # rf.get("dryer"),
-                    # rf.get("iron"),
-                    # rf.get("out_units"),
-                    # rf.get("in_units"),
-                    # rf.get("alarm"),
-                    # rf.get("electronics"),
-                    # rf.get("domotics"),
-                    # rf.get("elec_car"),
-                    # rf.get("solar_panels")
-        )
+        new_house = {}
+        form_values = ["proj_title", "address",  "m2", "floors", "pool", "garden", "fridge", "freezer", "oven", "vitro_hub", "wash_machine", "dryer", "iron", "climate_outdoor_unit", "climate_indoor_unit", "alarm", "electronics", "domotics", "elec_car", "solar_panels"]
+        for name in form_values:
+            new_house[name] = rf.get(name) if rf.get(name) else None
         new_house = (*dict(rf).values(),)
         print(new_house)
     return render_template("new_project.html")

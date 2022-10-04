@@ -52,7 +52,7 @@ class House(db.Model):
     def gen_id():
         return uuid4().hex
 
-    def __init__(self, user_id: str, proj_title: str, address: str, m2: float, floors: int, pool: bool, garden: bool, fridge: bool, freezer: bool, oven: bool, vitro_hub: bool, dishwasher: bool, boiler: bool, aerothermia: bool, electric_heater: bool, wash_machine: bool, dryer: bool, iron: bool, alarm: bool, electronics: bool, domotics: bool, elec_car: bool, solar_panels: bool, climate_outdoor_unit=None, climate_indoor_unit=None):
+    def __init__(self, user_id: str, proj_title: str, address: str, m2: float, floors: int, pool: bool, garden: bool, fridge: bool, freezer: bool, oven: bool, vitro_hub: bool, dishwasher: bool, heating_system: str, wash_machine: bool, dryer: bool, iron: bool, alarm: bool, electronics: bool, domotics: bool, elec_car: bool, solar_panels: bool, climate_outdoor_unit=None, climate_indoor_unit=None):
         self.id = self.gen_id()
         self.user_id = user_id
         self.proj_title = proj_title
@@ -66,9 +66,7 @@ class House(db.Model):
         self.oven = oven
         self.vitro_hub = vitro_hub
         self.dishwasher = dishwasher
-        self.boiler = boiler
-        self.aerothermia = aerothermia
-        self.electric_heater = electric_heater
+        self.heating_system = heating_system
         self.wash_machine = wash_machine
         self.dryer = dryer
         self.iron = iron

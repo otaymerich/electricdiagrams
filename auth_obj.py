@@ -1,6 +1,6 @@
 from functools import wraps
 from hashlib import sha1
-from flask import redirect, url_for
+from flask import redirect, url_for, render_template
 from secrets import token_urlsafe
 
 SECRET_KEY = "ELECdiagrams"
@@ -36,7 +36,8 @@ class Auth:
     def login_check(self, func):
         @wraps(func)
         def inner(*args):
-            if self.request.method == "POST":
+            if self.request.method == "POST" and len(self.request.form) == 2: #check the len of the form to distinguish between login or new_user form
+                print(len(self.request.form))
                 user_email = self.request.form["email"]
                 user_pwd = self.encrypt_psw(self.request.form["pwd"])
                 user = self.users.query.filter_by(email=user_email).first()
@@ -48,6 +49,7 @@ class Auth:
                         self.db.session.add(user)
                         self.db.session.commit()
                         return redirect(url_for(self.home_url))
+                return render_template("login.html", message="**User or password incorrect**")    
             return func(*args)
         return inner
         
