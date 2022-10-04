@@ -24,7 +24,7 @@ class House(db.Model):
     __tablename__ = "houses"
     id = db.Column(db.String(32), primary_key=True)
     user_id = db.Column(db.String(32), db.ForeignKey("users.id"))
-    proj_title = db.Column(db.String(20), unique=True)
+    proj_title = db.Column(db.String(20), nullable=False)
     address = db.Column(db.String, nullable=False)
     m2 = db.Column(db.Float, nullable=False)
     floors = db.Column(db.Integer)
@@ -78,3 +78,11 @@ class House(db.Model):
         self.climate_outdoor_unit = new_house["climate_outdoor_unit"]
         self.climate_indoor_unit = new_house["climate_indoor_unit"]
 
+    def public(self):
+        return {
+            "Project titel": self.proj_title,
+            "Adress": self.address,
+            "Meters square": self.m2,
+            "Floors": self.floors,
+            "User": Users.query.filter_by(id=self.user_id).first().name
+            }

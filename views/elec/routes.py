@@ -47,6 +47,12 @@ def t_new_project():
         db.session.commit()
     return render_template("new_project.html")
 
+@elec.route("/projects", methods=["GET", "POST"])
+@test_auth.auth
+def t_show_projects():
+    user = Users.query.filter_by(id=session.get("id")).first()
+    houses = list(map(lambda roomie: roomie.public(), user.houses))
+    return render_template("table.html", elements=houses)
 
 @elec.route("/logout")
 def log_out():

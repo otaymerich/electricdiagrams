@@ -1,0 +1,48 @@
+{%extends "base.html"%}
+
+{%block main%}
+
+<table class="table" style="width: 80%;" id="table">
+    {%if elements%}
+    <thead class="table-dark">
+      <tr>
+      {%for e in elements[0].keys()%}
+        {%if e == "User"%}
+        <th scope="col">View project</th>
+        {%else%}
+        <th scope="col">{{e}}</th>
+        {%endif%}
+      {%endfor%}
+      </tr>
+    </thead>
+    <tbody id="tbody" class="table-group-divider">
+      {%for e in elements%}
+      <tr>
+        {%for k, field in e.items()%}
+        <td scope="row" class="table_{{k}}">{{field}}</td>
+        {%endfor%}
+      </tr>
+      {%endfor%}
+    </tbody>
+    {%endif%}
+</table>
+
+<script>
+
+function button_id() {
+  const tbody = document.querySelector("#tbody");
+  let elements = Array(...tbody.children);
+  elements.forEach((tr) => {
+    let id = tr.children[tr.children.length - 1];
+    let url = document.URL.split("/")[document.URL.split("/").length - 1];
+
+    id.innerHTML = `<a class="btn btn-primary table_button" href="#">Go</a>`
+  });
+  };
+
+button_id()
+
+</script>
+
+
+{%endblock%}
