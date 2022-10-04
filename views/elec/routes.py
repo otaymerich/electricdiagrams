@@ -1,4 +1,3 @@
-from email import message
 from flask import Blueprint, render_template, request, session, redirect, url_for, make_response
 from auth_obj import Auth
 from views.elec.models import db, Users, House

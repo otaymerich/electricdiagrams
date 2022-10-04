@@ -3,6 +3,7 @@ from uuid import uuid4
 
 class Users(db.Model):
     __tablename__ = "users"
+    __bind_key__ = "elec"
     id = db.Column(db.String(32), primary_key=True)
     name = db.Column(db.String(20))
     email = db.Column(db.String(100), unique=True)
@@ -22,6 +23,7 @@ class Users(db.Model):
     
 class House(db.Model):
     __tablename__ = "houses"
+    __bind_key__ = "elec"
     id = db.Column(db.String(32), primary_key=True)
     user_id = db.Column(db.String(32), db.ForeignKey("users.id"))
     proj_title = db.Column(db.String(20), nullable=False)
