@@ -8,6 +8,7 @@ class Projects(db.Model):
     id = db.Column(db.String(32), primary_key=True)
     author = db.Column(db.String(20))
     title = db.Column(db.String(20))
+    address = db.Column(db.String)
     lines = db.relationship("Lines", backref="lines", lazy=True)
 
 
