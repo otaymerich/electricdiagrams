@@ -81,10 +81,8 @@ class House(db.Model):
         self.climate_indoor_unit = new_house["climate_indoor_unit"]
 
     def public(self):
-        return {
-            "Project titel": self.proj_title,
-            "Adress": self.address,
-            "Meters square": self.m2,
-            "Floors": self.floors,
-            "User": Users.query.filter_by(id=self.user_id).first().name
-            }
+        house = {"author": Users.query.filter_by(id=self.user_id).first().name}
+        for k,v in vars(self).items():
+            if k[0] != "_" and v and "id" not in k: #revisar
+                house[k] = v
+        return house

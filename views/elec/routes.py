@@ -62,8 +62,9 @@ def log_out():
 
 @elec.route("/test")
 def t_test():
-    print(session.get("id"))
+    house = House.query.filter_by(user_id=session.get("id")).first()
     # user = Users.add_user("test1", "test1@email.com", "1234")
     # db.session.add(user)
     # db.session.commit()
+    # print(house.public())
     return "test"
