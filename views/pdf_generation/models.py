@@ -16,11 +16,11 @@ class Projects(db.Model):
     def gen_id():
         return uuid4().hex
 
-    def __init__(self, author: str, title: str):
+    def __init__(self, author: str, title: str, address: str):
         self.id = self.gen_id()
         self.author = author
         self.title = title
-
+        self.address = address
 
 class Lines(db.Model):
     __tablename__ = "lines"
