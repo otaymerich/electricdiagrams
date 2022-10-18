@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for, make_response
 from auth_obj import Auth
 from views.elec.models import db, Users, House
-from views.pdf_generation.utils import create_project
+from views.pdf_generation.utils import create_project, organize_house
 
 elec = Blueprint("elec", __name__)
 test_auth = Auth(session, Users, "elec.t_login", "elec.home", request, db)
@@ -69,5 +69,5 @@ def t_test():
     # db.session.commit()
     house = house.public()
     print(house["address"])
-    create_project(house)
+    print(organize_house(house))
     return "test"

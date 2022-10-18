@@ -10,14 +10,15 @@ class Projects(db.Model):
     title = db.Column(db.String(20))
     address = db.Column(db.String)
     lines = db.relationship("Lines", backref="lines", lazy=True)
+    proteccions = db.relationship("Proteccions", backref="proteccions", lazy=True)
 
 
     @staticmethod
     def gen_id():
         return uuid4().hex
 
-    def __init__(self, author: str, title: str, address: str):
-        self.id = self.gen_id()
+    def __init__(self, project_id: str, author: str, title: str, address: str):
+        self.id = project_id
         self.author = author
         self.title = title
         self.address = address
@@ -33,15 +34,14 @@ class Lines(db.Model):
     cable = db.Column(db.String(12))
     seccion = db.Column(db.String(10))
     page = db.Column(db.Integer)
-    proteccions = db.relationship("Proteccions", backref="proteccions", lazy=True)
 
 
     @staticmethod
     def gen_id():
         return uuid4().hex
 
-    def __init__(self, project_id: str, line_number: int, position_x: float, description: str, cable: str, seccion: str, page: int):
-        self.id = self.gen_id()
+    def __init__(self, line_id: str, project_id: str, line_number: int, position_x: float, description: str, cable: str, seccion: str, page: int):
+        self.id = line_id
         self.project_id = project_id
         self.line_number = line_number
         self.position_x = position_x
@@ -55,7 +55,7 @@ class Proteccions(db.Model):
     __tablename__ = "proteccions"
     __bind_key__ = "pdf"
     id = db.Column(db.String(32), primary_key=True)
-    line_id = db.Column(db.String(32), db.ForeignKey("lines.id"))
+    project_id = db.Column(db.String(32), db.ForeignKey("projects.id"))
     position_x = db.Column(db.Float)
     position_y = db.Column(db.Float)
     protec_type = db.Column(db.String(12))
@@ -68,9 +68,9 @@ class Proteccions(db.Model):
     def gen_id():
         return uuid4().hex
 
-    def __init__(self, line_id: str, position_x: float, position_y: float, protec_type: str, pols: int, ampere: int, description: str, page: int):
-        self.id = self.gen_id()
-        self.line_id = line_id
+    def __init__(self, protec_id:str, project_id: str, position_x: float, position_y: float, protec_type: str, pols: int, ampere: int, description: str, page: int):
+        self.id = protec_id
+        self.project_id = project_id
         self.position_x = position_x
         self.position_y = position_y
         self.protec_type = protec_type
