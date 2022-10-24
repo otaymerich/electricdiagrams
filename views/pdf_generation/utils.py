@@ -10,7 +10,6 @@ def actualize_line_page(line_number: int, page: int):
     return line_number, page
 
 def organize_house(house: dict):
-    print(house)
     line_number = 1
     page = 1
     main_lines = {}
@@ -22,6 +21,10 @@ def organize_house(house: dict):
     if "garden" in keys:
         garden, line_number, page = add_garden(line_number, page)
         main_lines["garden"] = garden
+    print(house)
+    print(house["heating_system"])
+    heating_system, line_number, page = add_heating_system(house["heating_system"], line_number, page)
+    main_lines["heating_system"] = heating_system
     general, line_number, page = add_generallines(house["floors"], house["m2"], line_number, page)
     for i, k in enumerate(general.values(), start=1):
         main_lines[f"general_{i}"] = k
@@ -282,19 +285,13 @@ def add_cleaning(cleaning: list, line_number, page):
     return clean, line_number, page
 
 def add_heating_system(system: str, line_number, page):
-    if system == "Boiler":
-        name = "Caldera"
-    if system == "Aerothermia":
-        name = "Aerotermia"
-    if system == "Electric heater":
-        name = "Termo eléctrico"
-    pool = {"head_proteccion": {
+    heating_system = {"head_proteccion": {
                 "position_x": 139,
                 "position_y": 760-100*line_number,
                 "protec_type": "D",
                 "pols": 2,
                 "ampere": 40,
-                "description": "300mA\nTipo AC-S",
+                "description": "30mA\nTipo AC",
                 "page": page},
             "sub_lines":{0:{
                 "proteccion":{
@@ -302,7 +299,7 @@ def add_heating_system(system: str, line_number, page):
                     "position_y": 760-100*line_number,
                     "protec_type": "M",
                     "pols": 2,
-                    "ampere": 20,
+                    "ampere": 16,
                     "description": "C",
                     "page": page},
                 "line":{
@@ -310,11 +307,24 @@ def add_heating_system(system: str, line_number, page):
                     "pols": 2,
                     "page": page,
                     "line_number": f"L{line_number}",
-                    "description": f"{name}",
+                    "description": f"{system}",
                     "cable": "RZ1-K",
-                    "seccion": "4mm"}}
+                    "seccion": "2,5mm"}}
             }
-    } 
+    }
+    if system == "Boiler":
+        heating_system["sub_lines"][0]["line"]["description"] = "Caldera"
+    if system == "Aerothermia":
+        heating_system["head_proteccion"]["description"] = "30mA\nTipo SI"
+        heating_system["sub_lines"][0]["line"]["description"] = "Aerotermia"
+        heating_system["sub_lines"][0]["proteccion"]["ampere"] = 25
+        heating_system["sub_lines"][0]["line"]["seccion"] = "4mm"
+    if system == "Electric heater":
+        heating_system["sub_lines"][0]["line"]["description"] = "Termo eléctrico"
+        heating_system["sub_lines"][0]["proteccion"]["ampere"] = 20
+        heating_system["sub_lines"][0]["line"]["seccion"] = "4mm"
+    line_number, page = actualize_line_page(line_number, page)
+    return heating_system, line_number, page
 
 def add_clima(outdoor: int, indoor: int, line_number: int, page: int):
     clima_lines = {}
@@ -348,7 +358,7 @@ def add_clima(outdoor: int, indoor: int, line_number: int, page: int):
         }
         line_number, page = actualize_line_page(line_number, page)
     if outdoor == 0 or outdoor == 1:
-        if len(clima_lines) == 0:
+        if outdoor == 0:
             clima_lines[1] = {"head_proteccion": {
                     "position_x": 139,
                     "position_y": 760-100*line_number,
@@ -364,6 +374,7 @@ def add_clima(outdoor: int, indoor: int, line_number: int, page: int):
             indoor2 = indoor - indoor1
             for i in range(indoor1):
                 unit_number = i + 1
+                i = i +1 if clima_lines[1]["sub_lines"][i] else i
                 clima_lines[1]["sub_lines"][i] = clima_final_line(unit_number, line_number, page)
                 line_number, page = actualize_line_page(line_number, page)
             clima_lines[2] = {"head_proteccion": {
@@ -380,12 +391,15 @@ def add_clima(outdoor: int, indoor: int, line_number: int, page: int):
                 unit_number = indoor1 + i + 1
                 clima_lines[2]["sub_lines"][i] = clima_final_line(unit_number, line_number, page)
                 line_number, page = actualize_line_page(line_number, page)
-            print(f"-----\n{clima_lines}\n------")
         else:
             for i in range(indoor):
+                print(clima_lines)
+                print("\n")
                 unit_number = i + 1
+                i = i + 1 if clima_lines[1]["sub_lines"][i] else i
                 clima_lines[1]["sub_lines"][i] = clima_final_line(unit_number, line_number, page)
                 line_number, page = actualize_line_page(line_number, page)
+            print(clima_lines)
     elif len(clima_lines) == 2:
         indoor1 = int(indoor/2) if indoor % 2 == 0 else int(indoor/2 + 1)
         indoor2 = indoor - indoor1
@@ -439,7 +453,6 @@ def create_lines(lines: dict, proj_id: str):
     for line in lines.values():
         create_proteccion(line["head_proteccion"], proj_id)
         for sub_line in line["sub_lines"].values():
-            print(sub_line["line"])
             create_proteccion(sub_line["proteccion"], proj_id)
             new_line = Lines(Lines.gen_id(),
                             proj_id,

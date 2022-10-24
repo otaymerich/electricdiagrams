@@ -14,9 +14,8 @@ def draw_cables (page_drawings, next_position_x = False, prev_position_x = False
     if len(entrance_line) > 1:
         cables_list.extend(shape_horizontal_cable(99, entrance_line[0], entrance_line[-1]))
     '''Create general horizontal line'''
-    general_line = list(filter(lambda protec: protec if protec.position_x==139 or protec.position_x==48  else None, page_drawings))
+    general_line = list(filter(lambda protec: protec if protec.position_x==139  else None, page_drawings))
     general_line = sorted(list(map(lambda protec: protec.position_y, general_line)), reverse=True)
-    print(general_line)
     if next_position_x == 139:
         general_line.append(30)
     if prev_position_x:
