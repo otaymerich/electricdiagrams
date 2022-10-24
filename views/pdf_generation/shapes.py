@@ -1,10 +1,9 @@
 from fitz import Point, Rect
 import datetime
 
-level_1 = 48
-level_2 = 139
-level_3 = 220
-author = "Ot Aymerich Alemany"
+# level_1 = 48
+# level_2 = 139
+# level_3 = 220
 
 def shape_singlephase_cable(y: float) -> list:
     singlephase = [{'items': [], 'stroke_opacity': 1.0, 'color': (0.0, 0.0, 0.0), 'width': 0.0, 'lineCap': (0, 0, 0), 'lineJoin': 0.0, 'dashes': '[] 0', 'closePath': False, 'fill': None, 'fill_opacity': 1, 'even_odd': True}]
@@ -28,7 +27,7 @@ def shape_threephase_cable(y: float) -> list:
     threephase[0]["items"] = items
     return threephase
 
-def shape_magneto (x: float, y: float) -> list:
+def shape_magneto (x: float, y: float, solar=False) -> list:
     magneto = [{'items': [], 'stroke_opacity': 1.0, 'color': (0.0, 0.0, 0.0), 'width': 0.0, 'lineCap': (0, 0, 0), 'lineJoin': 0.0, 'dashes': '[] 0', 'closePath': False, 'fill': None, 'fill_opacity': 1, 'even_odd': True}]
     items = [('l', Point(x-20, y), Point(x+19, y)),
             ('l', Point(x+19, y+3), Point(x+19, y-3)),
@@ -36,6 +35,13 @@ def shape_magneto (x: float, y: float) -> list:
             ('l', Point(x+39, y), Point(x+71, y)),
             ('l', Point(x+17, y+3), Point(x+11, y-3)),
             ('l', Point(x+11, y+3), Point(x+17, y-3))]
+    if solar:
+            items = [('l', Point(x-20, y), Point(x+19, y)),
+                ('l', Point(x+19, y+3), Point(x+19, y-3)),
+                ('l', Point(x+21, y+6), Point(x+39, y)),
+                ('l', Point(x+39, y), Point(x+51, y)),
+                ('l', Point(x+17, y+3), Point(x+11, y-3)),
+                ('l', Point(x+11, y+3), Point(x+17, y-3))]
     magneto[0]["items"] = items
     return magneto
 
@@ -49,9 +55,9 @@ def shape_diferencial (x: float, y: float) -> list:
     diferencial[0]["items"] = items
     return diferencial
 
-def shape_horizontal_cable (x: float, y: float, n: int) -> list:
+def shape_horizontal_cable (x: float, y1: float, y2: float) -> list:
     cable = [{'items': [], 'stroke_opacity': 1.0, 'color': (0.0, 0.0, 0.0), 'width': 0.0, 'lineCap': (0, 0, 0), 'lineJoin': 0.0, 'dashes': '[] 0', 'closePath': False, 'fill': None, 'fill_opacity': 1, 'even_odd': True}]
-    items = [('l', Point(x, y), Point(x, y-100*n))]
+    items = [('l', Point(x, y1), Point(x, y2))]
     cable[0]["items"] = items
     return cable
 
@@ -82,12 +88,12 @@ def create_frame() -> list:
     draw_list.extend(shape_line(535,10,535,832))
     return draw_list
 
-def text_frame(title) -> list:
+def text_frame(title, author, page) -> list:
     text_list = add_textbox(448, 827, "ID Línea", (0,0,0))
     text_list.extend(add_textbox(478, 827, "Descripción", (0,0,0)))
     text_list.extend(add_textbox(508, 827, "Tipo de cable", (0,0,0)))
     text_list.extend(add_textbox(528, 827, "Sección", (0,0,0)))
-    text_list.extend(add_textbox(578, 50, "Pg. 1", (0,0,0)))
+    text_list.extend(add_textbox(578, 50, f"Pg. {page}", (0,0,0)))
     text_list.append((Rect(Point(540,110),Point(573, 610)), title, (0,0,0)))
     text_list.extend(add_textbox(568, 600, f"Autor: {author}", (0,0,0)))
     text_list.extend(add_textbox(580, 600, data(), (0,0,0)))
@@ -100,12 +106,13 @@ def data():
     final_date = f'''{days[int(date.strftime("%w"))]} {date.strftime("%d")} de {months[int(date.strftime("%m"))-1]}, {date.strftime("%Y")}'''
     return final_date
 
-def text_line(line: dict) -> list:
-    y = 710-100*(int(line["posicion"])-1)
-    text_list = [(Rect(Point(435, y-100),Point(455, y)), line["lineid"], (0,0,0))]
-    text_list.append((Rect(Point(455, y-100),Point(495, y)), line["description"], (0,0,0)))
-    text_list.append((Rect(Point(495, y-100),Point(515, y)), line["cabletype"], (0,0,0)))
-    text_list.append((Rect(Point(515, y-100),Point(535, y)), f'''{line["pols"]}x{line["seccion"]}''', (0,0,0)))
+def text_line(line: object) -> list:
+    y1 = line.position_y - 50
+    y2 = line.position_y + 50
+    text_list = [(Rect(Point(435, y1),Point(455, y2)), line.line_number, (0,0,0))]
+    text_list.append((Rect(Point(455, y1),Point(495, y2)), line.description, (0,0,0)))
+    text_list.append((Rect(Point(495, y1),Point(515, y2)), line.cable, (0,0,0)))
+    text_list.append((Rect(Point(515, y1),Point(535, y2)), f'''{line.pols}x{line.seccion}''', (0,0,0)))
     return text_list
 
 def nex_page(level):

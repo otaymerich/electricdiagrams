@@ -9,6 +9,7 @@ class Projects(db.Model):
     author = db.Column(db.String(20))
     title = db.Column(db.String(20))
     address = db.Column(db.String)
+    n_pg = db.Column(db.Integer)
     lines = db.relationship("Lines", backref="lines", lazy=True)
     proteccions = db.relationship("Proteccions", backref="proteccions", lazy=True)
 
@@ -17,11 +18,12 @@ class Projects(db.Model):
     def gen_id():
         return uuid4().hex
 
-    def __init__(self, project_id: str, author: str, title: str, address: str):
+    def __init__(self, project_id: str, author: str, title: str, address: str, n_pg: int):
         self.id = project_id
         self.author = author
         self.title = title
         self.address = address
+        self.n_pg = n_pg
 
 class Lines(db.Model):
     __tablename__ = "lines"
@@ -29,9 +31,10 @@ class Lines(db.Model):
     id = db.Column(db.String(32), primary_key=True)
     project_id = db.Column(db.String(32), db.ForeignKey("projects.id"))
     line_number = db.Column(db.Integer)
-    position_x = db.Column(db.Float)
+    position_y = db.Column(db.Float)
     description = db.Column(db.String(20))
     cable = db.Column(db.String(12))
+    pols = db.Column(db.Integer)
     seccion = db.Column(db.String(10))
     page = db.Column(db.Integer)
 
@@ -40,13 +43,14 @@ class Lines(db.Model):
     def gen_id():
         return uuid4().hex
 
-    def __init__(self, line_id: str, project_id: str, line_number: int, position_x: float, description: str, cable: str, seccion: str, page: int):
+    def __init__(self, line_id: str, project_id: str, line_number: int, position_y: float, description: str, cable: str, pols: int, seccion: str, page: int):
         self.id = line_id
         self.project_id = project_id
         self.line_number = line_number
-        self.position_x = position_x
+        self.position_y = position_y
         self.description = description
         self.cable = cable
+        self.pols = pols
         self.seccion = seccion
         self.page = page
 
