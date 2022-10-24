@@ -15,11 +15,12 @@ def draw_cables (page_drawings, next_position_x = False, prev_position_x = False
         cables_list.extend(shape_horizontal_cable(99, entrance_line[0], entrance_line[-1]))
     '''Create general horizontal line'''
     general_line = list(filter(lambda protec: protec if protec.position_x==139 or protec.position_x==48  else None, page_drawings))
-    general_line = sorted(list(map(lambda protec: protec.position_y, general_line)))
+    general_line = sorted(list(map(lambda protec: protec.position_y, general_line)), reverse=True)
+    print(general_line)
     if next_position_x == 139:
         general_line.append(30)
     if prev_position_x:
-        general_line.append(690)
+        general_line.insert(0, 690)
     if len(general_line) > 1:
         cables_list.extend(shape_horizontal_cable(119, general_line[0], general_line[-1]))
     '''Create horizontal sub_lines'''
@@ -30,7 +31,6 @@ def draw_cables (page_drawings, next_position_x = False, prev_position_x = False
     if prev_position_x == 220:
         sub_lines.append(690)
     for protec_y in sub_lines:
-        print(protec_y)
         if protec_y - 100 in sub_lines and protec_y - 100 not in general_line:
             cables_list.extend(shape_horizontal_cable(200, protec_y, protec_y-100))
         elif protec_y == 690:
@@ -41,8 +41,6 @@ def draw_cables (page_drawings, next_position_x = False, prev_position_x = False
 
 def draw_page(project: object, page: int):
     '''Drawing proteccions'''
-    print(page)
-    
     protec_drawings = list(Proteccions.query.filter_by(project_id=project.id, page=page).all())
     next_protec = Proteccions.query.filter_by(project_id=project.id, page=page+1, position_y=660).first()
     if page > 1:
@@ -55,9 +53,6 @@ def draw_page(project: object, page: int):
     elif next_protec and prev_protec == None:
         draw_list.extend(draw_cables(protec_drawings, next_protec.position_x))
     elif next_protec == None and prev_protec:
-        print("----------")
-        print(prev_protec.position_x)
-        print("----------")
         draw_list.extend(draw_cables(protec_drawings, False, prev_protec.position_x))
     else:
         draw_list.extend(draw_cables(protec_drawings))
@@ -96,7 +91,6 @@ def create_pdf(project):
     doc = fitz.open()
     for page in range(project.n_pg):
         page = page+1
-        print(page)
         outpage = doc.new_page(width=595, height=842)
         shape = outpage.new_shape()
         '''
@@ -146,7 +140,6 @@ def create_pdf(project):
                 outpage.insert_text(textbox[0], textbox[1], fontsize=9.5, fontname='helv', fontfile=None, color=textbox[2], fill=None, render_mode=0, border_width=1, rotate=90, morph=None, stroke_opacity=1, fill_opacity=1, overlay=True, oc=0)
             elif type(textbox[0]) == Rect:
                 outpage.insert_textbox(textbox[0], textbox[1], fontsize=9.5, fontname='helv', fontfile=None, color=textbox[2], fill=None, render_mode=0, border_width=1, encoding='utf8', expandtabs=8, align=1, rotate=90, morph=None, stroke_opacity=1, fill_opacity=1, oc=0, overlay=True)
-        print(f"pg.{page} done")
     '''
     insert company logo
     #'''
