@@ -14,6 +14,7 @@ def organize_house(house: dict):
     page = 1
     main_lines = {}
     keys = house.keys()
+    print(keys)
     if "pool" in keys:
         pool = add_pool(line_number, page)
         main_lines["pool"] = pool
@@ -21,14 +22,15 @@ def organize_house(house: dict):
     if "garden" in keys:
         garden, line_number, page = add_garden(line_number, page)
         main_lines["garden"] = garden
-    print(house)
-    print(house["heating_system"])
     heating_system, line_number, page = add_heating_system(house["heating_system"], line_number, page)
     main_lines["heating_system"] = heating_system
     general, line_number, page = add_generallines(house["floors"], house["m2"], line_number, page)
     for i, k in enumerate(general.values(), start=1):
         main_lines[f"general_{i}"] = k
     cleaning = list(filter(lambda key: key if key == "wash_machine" or key == "iron" or key == "dryer" else None, keys))
+    kitchen = list(filter(lambda element: element == "fridge" or element == "freezer", keys))
+    kitchen_lines, line_number, page = add_kitchen_1(kitchen, line_number, page)
+    main_lines["kitchen_1"] = kitchen_lines
     if len(cleaning) > 0:
         clean, line_number, page = add_cleaning(cleaning, line_number, page)
         main_lines["cleaning"] = clean
@@ -39,7 +41,6 @@ def organize_house(house: dict):
             clima, line_number, page = add_clima(outdoor, indoor, line_number, page)
             for i, k in enumerate(clima.values(), start=1):
                 main_lines[f"clima_{i}"] = k
-    
     data = {"data":{
         "proj_description":{
             "project_id": Projects.gen_id(),
@@ -306,7 +307,7 @@ def add_heating_system(system: str, line_number, page):
                     "position_y": 760-100*line_number,
                     "pols": 2,
                     "page": page,
-                    "line_number": f"L{line_number}",
+                    "line_number": f"L{line_number+(7*(page-1))}",
                     "description": f"{system}",
                     "cable": "RZ1-K",
                     "seccion": "2,5mm"}}
@@ -328,8 +329,67 @@ def add_heating_system(system: str, line_number, page):
 
 def add_clima(outdoor: int, indoor: int, line_number: int, page: int):
     clima_lines = {}
-    for i in range(outdoor):
-        clima_lines[i+1] = {"head_proteccion": {
+    if outdoor != 0:
+        clima_lines[1] = clima_head_protec(1, line_number, page)
+        line_number, page = actualize_line_page(line_number, page)
+    if outdoor == 0 or outdoor == 1:
+        if outdoor == 0:
+            clima_lines[1] = {"head_proteccion": {
+                    "position_x": 139,
+                    "position_y": 760-100*line_number,
+                    "protec_type": "D",
+                    "pols": 2,
+                    "ampere": 40,
+                    "description": "30mA\nTipo SI",
+                    "page": page},
+                "sub_lines":{}
+                }
+        print(clima_lines)
+        if indoor >= 4:
+            indoor1 = int(indoor/2) if indoor % 2 == 0 else int(indoor/2 + 1)
+            indoor2 = indoor - indoor1
+            for i in range(indoor1):
+                unit_number = i + 1
+                i = i +1 if i in clima_lines[1]["sub_lines"].keys() else i
+                clima_lines[1]["sub_lines"][i] = clima_final_line(unit_number, line_number, page)
+                line_number, page = actualize_line_page(line_number, page)
+            clima_lines[2] = {"head_proteccion": {
+                "position_x": 139,
+                "position_y": 760-100*line_number,
+                "protec_type": "D",
+                "pols": 2,
+                "ampere": 40,
+                "description": "30mA\nTipo SI",
+                "page": page},
+            "sub_lines":{}
+            }
+            for i in range(indoor2):
+                unit_number = indoor1 + i + 1
+                clima_lines[2]["sub_lines"][i] = clima_final_line(unit_number, line_number, page)
+                line_number, page = actualize_line_page(line_number, page)
+        else:
+            for i in range(indoor):
+                unit_number = i + 1
+                i = i +1 if i in clima_lines[1]["sub_lines"].keys() else i
+                clima_lines[1]["sub_lines"][i] = clima_final_line(unit_number, line_number, page)
+                line_number, page = actualize_line_page(line_number, page)
+    elif outdoor == 2:
+        indoor1 = int(indoor/2) if indoor % 2 == 0 else int(indoor/2 + 1)
+        indoor2 = indoor - indoor1
+        for i in range(indoor1):
+            unit_number = i + 1
+            clima_lines[1]["sub_lines"][i+1] = clima_final_line(unit_number, line_number, page)
+            line_number, page = actualize_line_page(line_number, page)
+        clima_lines[2] = clima_head_protec(2, line_number, page)
+        line_number, page = actualize_line_page(line_number, page)
+        for i in range(indoor2):
+            unit_number = indoor1 + i + 1
+            clima_lines[2]["sub_lines"][i+1] = clima_final_line(unit_number, line_number, page)
+            line_number, page = actualize_line_page(line_number, page)
+    return clima_lines, line_number, page
+
+def clima_head_protec(num_unitat, line_number, page):
+    return {"head_proteccion": {
                 "position_x": 139,
                 "position_y": 760-100*line_number,
                 "protec_type": "D",
@@ -350,69 +410,11 @@ def add_clima(outdoor: int, indoor: int, line_number: int, page: int):
                     "position_y": 760-100*line_number,
                     "pols": 2,
                     "page": page,
-                    "line_number": f"L{line_number}",
-                    "description": f"Unidad exterior {i + 1}",
+                    "line_number": f"L{line_number+(7*(page-1))}",
+                    "description": f"Unidad exterior {num_unitat}",
                     "cable": "RZ1-K",
                     "seccion": "2,5mm"}}
-            }
-        }
-        line_number, page = actualize_line_page(line_number, page)
-    if outdoor == 0 or outdoor == 1:
-        if outdoor == 0:
-            clima_lines[1] = {"head_proteccion": {
-                    "position_x": 139,
-                    "position_y": 760-100*line_number,
-                    "protec_type": "D",
-                    "pols": 2,
-                    "ampere": 40,
-                    "description": "30mA\nTipo SI",
-                    "page": page},
-                "sub_lines":{}
-                }
-        if indoor >= 4:
-            indoor1 = int(indoor/2) if indoor % 2 == 0 else int(indoor/2 + 1)
-            indoor2 = indoor - indoor1
-            for i in range(indoor1):
-                unit_number = i + 1
-                i = i +1 if clima_lines[1]["sub_lines"][i] else i
-                clima_lines[1]["sub_lines"][i] = clima_final_line(unit_number, line_number, page)
-                line_number, page = actualize_line_page(line_number, page)
-            clima_lines[2] = {"head_proteccion": {
-                "position_x": 139,
-                "position_y": 760-100*line_number,
-                "protec_type": "D",
-                "pols": 2,
-                "ampere": 40,
-                "description": "30mA\nTipo SI",
-                "page": page},
-            "sub_lines":{}
-            }
-            for i in range(indoor2):
-                unit_number = indoor1 + i + 1
-                clima_lines[2]["sub_lines"][i] = clima_final_line(unit_number, line_number, page)
-                line_number, page = actualize_line_page(line_number, page)
-        else:
-            for i in range(indoor):
-                print(clima_lines)
-                print("\n")
-                unit_number = i + 1
-                i = i + 1 if clima_lines[1]["sub_lines"][i] else i
-                clima_lines[1]["sub_lines"][i] = clima_final_line(unit_number, line_number, page)
-                line_number, page = actualize_line_page(line_number, page)
-            print(clima_lines)
-    elif len(clima_lines) == 2:
-        indoor1 = int(indoor/2) if indoor % 2 == 0 else int(indoor/2 + 1)
-        indoor2 = indoor - indoor1
-        for i in range(indoor1):
-            unit_number = i + 1
-            clima_lines[1]["sub_lines"][i] = clima_final_line(unit_number, line_number, page)
-            line_number, page = actualize_line_page(line_number, page)
-        for i in range(indoor2):
-            unit_number = indoor1 + i + 1
-            clima_lines[2]["sub_lines"][i] = clima_final_line(unit_number, line_number, page)
-            line_number, page = actualize_line_page(line_number, page)
-    return clima_lines, line_number, page
-
+    }}
 
 def clima_final_line(unit_number, line_number, page):
     return {
@@ -428,11 +430,51 @@ def clima_final_line(unit_number, line_number, page):
             "position_y": 760-100*line_number,
             "pols": 2,
             "page": page,
-            "line_number": f"L{line_number}",
+            "line_number": f"L{line_number+(7*(page-1))}",
             "description": f"Unidad interior {unit_number}",
             "cable": "RZ1-K",
             "seccion": "1,5mm"}}
-            
+
+def add_kitchen_1(elements: list, line_number: int, page: int):
+    kitchen = {"head_proteccion": {
+                "position_x": 139,
+                "position_y": 760-100*line_number,
+                "protec_type": "D",
+                "pols": 2,
+                "ampere": 40,
+                "description": "30mA\nTipo SI",
+                "page": page},
+            "sub_lines":{}
+            }
+    for n, element in enumerate(elements):
+        if element == "fridge":
+            name = "Nevera"
+        elif element == "freezer":
+            name = "Congelador"
+        kitchen["sub_lines"][n] = {
+                "proteccion":{
+                    "position_x": 220,
+                    "position_y": 760-100*line_number,
+                    "protec_type": "M",
+                    "pols": 2,
+                    "ampere": 16,
+                    "description": "C",
+                    "page": page},
+                "line":{
+                    "position_y": 760-100*line_number,
+                    "pols": 2,
+                    "page": page,
+                    "line_number": f"L{line_number+(7*(page-1))}",
+                    "description": f"{name}",
+                    "cable": "RZ1-K",
+                    "pols": 2,
+                    "seccion": "2,5mm"}}
+        line_number, page = actualize_line_page(line_number, page)
+    return kitchen, line_number, page
+
+
+
+
 
 
 def create_project(data: dict):
