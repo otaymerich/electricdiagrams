@@ -14,8 +14,6 @@ def organize_house(house: dict):
     page = 1
     main_lines = {}
     keys = house.keys()
-    print(house)
-    print(keys)
     if "pool" in keys:
         pool = add_pool(line_number, page)
         main_lines["pool"] = pool
@@ -52,7 +50,7 @@ def organize_house(house: dict):
                 main_lines[f"clima_{i}"] = k
     extras = list(filter(lambda element: element == "alarm" or element == "electronics" or element == "domotics", keys))
     if len(extras) > 0:
-        extra, line_number, page = add_kitchen_2(extras, line_number, page)
+        extra, line_number, page = add_extras(extras, line_number, page)
         main_lines["extras"] = extra
     if "elec_car" in keys:
         car, line_number, page = add_car(line_number, page)
@@ -60,6 +58,7 @@ def organize_house(house: dict):
     data = {"data":{
         "proj_description":{
             "project_id": Projects.gen_id(),
+            "house_id": house["id"],
             "author": house["author"],
             "title": house["proj_title"],
             "address": house["address"],
@@ -72,7 +71,6 @@ def organize_house(house: dict):
     if "solar_panels" in house.keys():
         data["data"]["power_entrance"]["sub"] = add_solar()
     data["data"]["power_entrance"]["main"] = add_entrance(data["data"])
-
     create_project(data["data"])
     return "Success"
 
@@ -360,7 +358,6 @@ def add_clima(outdoor: int, indoor: int, line_number: int, page: int):
                     "page": page},
                 "sub_lines":{}
                 }
-        print(clima_lines)
         if indoor >= 4:
             indoor1 = int(indoor/2) if indoor % 2 == 0 else int(indoor/2 + 1)
             indoor2 = indoor - indoor1
@@ -631,6 +628,7 @@ def add_car(line_number, page):
 def create_project(data: dict):
     proj_desc = data["proj_description"]
     new_project = Projects(proj_desc["project_id"],
+                        proj_desc["house_id"],
                         proj_desc["author"],
                         proj_desc["title"],
                         proj_desc["address"],

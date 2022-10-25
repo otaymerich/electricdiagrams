@@ -45,6 +45,9 @@ def t_new_project():
         house = House(session.get("id"), new_house)
         db.session.add(house)
         db.session.commit()
+        print(house.project())
+        organize_house(house.project())
+        return redirect(f"/projects")
     return render_template("new_project.html")
 
 @elec.route("/projects", methods=["GET", "POST"])
@@ -63,11 +66,10 @@ def log_out():
 
 @elec.route("/test")
 def t_test():
-    house = House.query.filter_by(id="9abead9d82744ccfa7de2d815191a4e9").first()
+    house = House.query.filter_by(id="dabf24e2846349889a0ae673aef9a00e").first()
     # user = Users.add_user("test1", "test1@email.com", "1234")
     # db.session.add(user)
     # db.session.commit()
-    house = house.public()
-    print(house["address"])
-    print(organize_house(house))
+    house = house.project()
+    organize_house(house)
     return "test"

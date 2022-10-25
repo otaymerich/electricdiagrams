@@ -2,16 +2,20 @@
 
 {%block main%}
 
-<table class="table" style="width: 80%;" id="table">
+<table class="table align-middle" style="width: 80%;" id="table">
     {%if elements%}
+    <style>
+      table,
+      th,
+      td {
+          border: 1px solid black;
+          border-collapse: collapse;
+      }
+  </style>
     <thead class="table-dark">
       <tr>
       {%for e in elements[0].keys()%}
-        {%if e == "User"%}
-        <th scope="col">View project</th>
-        {%else%}
-        <th scope="col">{{e}}</th>
-        {%endif%}
+        <th class="text-center" scope="col">{{e}}</th>
       {%endfor%}
       </tr>
     </thead>
@@ -19,7 +23,11 @@
       {%for e in elements%}
       <tr>
         {%for k, field in e.items()%}
-        <td scope="row" class="table_{{k}}">{{field}}</td>
+          {%if k == "Proj_title"%}
+            <td scope="row" class="table_{{k}}">{{field}}</td>
+          {%else%}
+            <td scope="row" class="text-center table_{{k}}">{{field}}</td>
+          {%endif%}
         {%endfor%}
       </tr>
       {%endfor%}
@@ -35,8 +43,12 @@ function button_id() {
   elements.forEach((tr) => {
     let id = tr.children[tr.children.length - 1];
     let url = document.URL.split("/")[document.URL.split("/").length - 1];
-
-    id.innerHTML = `<a class="btn btn-primary table_button" href="#">Go</a>`
+      id.innerHTML = `<form method="POST" action="/project/${id.innerText}"><button class="btn btn-primary table_button" >
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+      <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+      <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+      </svg>
+      </button></form>`
   });
   };
 

@@ -5,9 +5,17 @@ from views.pdf_generation.shapes2 import create_pdf
 
 pdf = Blueprint("pdf", __name__)
 
+@pdf.route("/project/<house_id>", methods=["POST"])
+def t_pay_debt(house_id):
+    if request.method == "POST":
+        project = Projects.query.filter_by(house_id=house_id).first()
+        print(project.id)
+        create_pdf(project)
+        return house_id
+
 @pdf.route("/test2")
 def t_test():
-    project = Projects.query.filter_by(id="fa47293006794e93af94ec2451718069").first()
+    project = Projects.query.filter_by(id="d04120e8df734bff90291e34dce40696").first()
     # user = Users.add_user("test1", "test1@email.com", "1234")
     # db.session.add(user)
     # db.session.commit()

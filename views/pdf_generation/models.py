@@ -6,6 +6,7 @@ class Projects(db.Model):
     __tablename__ = "projects"
     __bind_key__ = "pdf"
     id = db.Column(db.String(32), primary_key=True)
+    house_id = db.Column(db.String(32))
     author = db.Column(db.String(20))
     title = db.Column(db.String(20))
     address = db.Column(db.String)
@@ -18,8 +19,9 @@ class Projects(db.Model):
     def gen_id():
         return uuid4().hex
 
-    def __init__(self, project_id: str, author: str, title: str, address: str, n_pg: int):
+    def __init__(self, project_id: str, house_id: str, author: str, title: str, address: str, n_pg: int):
         self.id = project_id
+        self.house_id = house_id
         self.author = author
         self.title = title
         self.address = address
