@@ -7,7 +7,7 @@ pdf = Blueprint("pdf", __name__)
 
 @pdf.route("/test2")
 def t_test():
-    project = Projects.query.filter_by(id="1247fc427aa9411ebd0d36e307a7be7e").first()
+    project = Projects.query.filter_by(id="fa47293006794e93af94ec2451718069").first()
     # user = Users.add_user("test1", "test1@email.com", "1234")
     # db.session.add(user)
     # db.session.commit()

@@ -83,6 +83,7 @@ class House(db.Model):
     def public(self):
         house = {"author": Users.query.filter_by(id=self.user_id).first().name}
         for k,v in vars(self).items():
-            if k[0] != "_" and v and "id" not in k: #revisar
+            if k[0] != "_" and k !="id" and k != "user_id": #revisar
                 house[k] = v
+        print(house)
         return house

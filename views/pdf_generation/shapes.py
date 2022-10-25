@@ -17,8 +17,8 @@ def shape_singlephase_cable(y: float) -> list:
 
 def shape_threephase_cable(y: float) -> list:
     threephase = [{'items': [], 'stroke_opacity': 1.0, 'color': (0.0, 0.0, 0.0), 'width': 0.0, 'lineCap': (0, 0, 0), 'lineJoin': 0.0, 'dashes': '[] 0', 'closePath': False, 'fill': None, 'fill_opacity': 1, 'even_odd': True}]
-    items = [('l', Point(290, y), Point(436, y)),#cable
-            ('circle', Point(490, y), 4),#borne
+    items = [('l', Point(290, y), Point(406, y)),#cable
+            ('circle', Point(400, y), 4),#borne
             ('l', Point(403.5, y+2), Point(396.5, y-2)),
             ('l', Point(385, y+10), Point(377, y-10)),#marca cable trifasic
             ('l', Point(388, y+10), Point(380, y-10)),

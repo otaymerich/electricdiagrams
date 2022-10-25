@@ -14,6 +14,7 @@ def organize_house(house: dict):
     page = 1
     main_lines = {}
     keys = house.keys()
+    print(house)
     print(keys)
     if "pool" in keys:
         pool = add_pool(line_number, page)
@@ -28,9 +29,17 @@ def organize_house(house: dict):
     for i, k in enumerate(general.values(), start=1):
         main_lines[f"general_{i}"] = k
     cleaning = list(filter(lambda key: key if key == "wash_machine" or key == "iron" or key == "dryer" else None, keys))
-    kitchen = list(filter(lambda element: element == "fridge" or element == "freezer", keys))
-    kitchen_lines, line_number, page = add_kitchen_1(kitchen, line_number, page)
-    main_lines["kitchen_1"] = kitchen_lines
+    kitchen1 = list(filter(lambda element: element == "fridge" or element == "freezer", keys))
+    if len(kitchen1) > 0:
+        kitchen_lines1, line_number, page = add_kitchen_1(kitchen1, line_number, page)
+        main_lines["kitchen_1"] = kitchen_lines1
+    kitchen2 = list(filter(lambda element: element == "oven" or element == "dishwasher", keys))
+    if len(kitchen2) > 0:
+        kitchen_lines2, line_number, page = add_kitchen_2(kitchen2, line_number, page)
+        main_lines["kitchen_2"] = kitchen_lines2
+    if "vitro_hub" in keys:
+        vitro, line_number, page = add_vitro(line_number, page)
+        main_lines["vitro"] = vitro
     if len(cleaning) > 0:
         clean, line_number, page = add_cleaning(cleaning, line_number, page)
         main_lines["cleaning"] = clean
@@ -41,6 +50,13 @@ def organize_house(house: dict):
             clima, line_number, page = add_clima(outdoor, indoor, line_number, page)
             for i, k in enumerate(clima.values(), start=1):
                 main_lines[f"clima_{i}"] = k
+    extras = list(filter(lambda element: element == "alarm" or element == "electronics" or element == "domotics", keys))
+    if len(extras) > 0:
+        extra, line_number, page = add_kitchen_2(extras, line_number, page)
+        main_lines["extras"] = extra
+    if "elec_car" in keys:
+        car, line_number, page = add_car(line_number, page)
+        main_lines["car"] = car
     data = {"data":{
         "proj_description":{
             "project_id": Projects.gen_id(),
@@ -472,9 +488,144 @@ def add_kitchen_1(elements: list, line_number: int, page: int):
         line_number, page = actualize_line_page(line_number, page)
     return kitchen, line_number, page
 
+def add_kitchen_2(elements: list, line_number:int, page: int):
+    kitchen = {"head_proteccion": {
+                "position_x": 139,
+                "position_y": 760-100*line_number,
+                "protec_type": "D",
+                "pols": 2,
+                "ampere": 40,
+                "description": "30mA\nTipo AC",
+                "page": page},
+            "sub_lines":{}
+            }
+    for n, element in enumerate(elements):
+        kitchen["sub_lines"][n] = {
+                "proteccion":{
+                    "position_x": 220,
+                    "position_y": 760-100*line_number,
+                    "protec_type": "M",
+                    "pols": 2,
+                    "ampere": 16,
+                    "description": "C",
+                    "page": page},
+                "line":{
+                    "position_y": 760-100*line_number,
+                    "pols": 2,
+                    "page": page,
+                    "line_number": f"L{line_number+(7*(page-1))}",
+                    "description": "",
+                    "cable": "RZ1-K",
+                    "pols": 2,
+                    "seccion": "2,5mm"}}
+        if element == "oven":
+            kitchen["sub_lines"][n]["line"]["description"] = "Horono"
+            kitchen["sub_lines"][n]["proteccion"]["ampere"] = 20
+            kitchen["sub_lines"][n]["line"]["seccion"] = "4mm"
+        elif element == "dishwasher":
+            kitchen["sub_lines"][n]["line"]["description"] = "Lavaplatos"
+        line_number, page = actualize_line_page(line_number, page)
+    return kitchen, line_number, page
+        
 
+def add_vitro(line_number, page):
+    vitro =  {"head_proteccion": {
+                "position_x": 139,
+                "position_y": 760-100*line_number,
+                "protec_type": "D",
+                "pols": 4,
+                "ampere": 40,
+                "description": "30mA\nTipo SI",
+                "page": page},
+            "sub_lines":{0:{
+                "proteccion":{
+                    "position_x": 220,
+                    "position_y": 760-100*line_number,
+                    "protec_type": "M",
+                    "pols": 4,
+                    "ampere": 16,
+                    "description": "C",
+                    "page": page},
+                "line":{
+                    "position_y": 760-100*line_number,
+                    "pols": 4,
+                    "page": page,
+                    "line_number": f"L{line_number+(7*(page-1))}",
+                    "description": "Vitrocerámica",
+                    "cable": "RZ1-K",
+                    "seccion": "2,5mm"}}
+    }}
+    line_number, page = actualize_line_page(line_number, page)
+    return vitro, line_number, page
 
+def add_extras(elements, line_number, page):
+    extra = {"head_proteccion": {
+                "position_x": 139,
+                "position_y": 760-100*line_number,
+                "protec_type": "D",
+                "pols": 2,
+                "ampere": 40,
+                "description": "30mA\nTipo SI",
+                "page": page},
+            "sub_lines":{}
+            }
+    for n, element in enumerate(elements):
+        extra["sub_lines"][n] = {
+                "proteccion":{
+                    "position_x": 220,
+                    "position_y": 760-100*line_number,
+                    "protec_type": "M",
+                    "pols": 2,
+                    "ampere": 10,
+                    "description": "C",
+                    "page": page},
+                "line":{
+                    "position_y": 760-100*line_number,
+                    "pols": 2,
+                    "page": page,
+                    "line_number": f"L{line_number+(7*(page-1))}",
+                    "description": "",
+                    "cable": "RZ1-K",
+                    "pols": 2,
+                    "seccion": "1,5mm"}}
+        if element == "alarm":
+            extra["sub_lines"][n]["line"]["description"] = "Alarma"
+        elif element == "electronics":
+            extra["sub_lines"][n]["line"]["description"] = "Aparatos electrónicos"
+        elif element == "domotics":
+            extra["sub_lines"][n]["line"]["description"] = "Control domótico"    
+        line_number, page = actualize_line_page(line_number, page)
+    return extra, line_number, page
 
+def add_car(line_number, page):
+    car =  {"head_proteccion": {
+                "position_x": 139,
+                "position_y": 760-100*line_number,
+                "protec_type": "D",
+                "pols": 4,
+                "ampere": 40,
+                "description": "30mA\nTipo SI",
+                "page": page},
+            "sub_lines":{0:{
+                "proteccion":{
+                    "position_x": 220,
+                    "position_y": 760-100*line_number,
+                    "protec_type": "M",
+                    "pols": 4,
+                    "ampere": 20,
+                    "description": "C",
+                    "page": page},
+                "line":{
+                    "position_y": 760-100*line_number,
+                    "pols": 4,
+                    "page": page,
+                    "line_number": f"L{line_number+(7*(page-1))}",
+                    "description": "Carg. coche eléctrico",
+                    "cable": "RZ1-K",
+                    "seccion": "4mm"}}
+    }}
+    line_number, page = actualize_line_page(line_number, page)
+    return car, line_number, page
 
 
 def create_project(data: dict):

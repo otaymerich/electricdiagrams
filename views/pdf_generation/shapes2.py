@@ -7,6 +7,7 @@ from views.pdf_generation.shapes import text_line,create_frame, shape_singlephas
 from views.pdf_generation.models import db, Proteccions, Projects, Lines
 
 def draw_cables (page_drawings, next_position_x = False, prev_position_x = False):
+    print(next_position_x)
     '''Create horizontal line for multiple entrances of power'''
     entrance_line = list(filter(lambda protec: protec if protec.position_x==48  else None, page_drawings))
     entrance_line = sorted(list(map(lambda protec: protec.position_y, entrance_line)))
@@ -20,6 +21,7 @@ def draw_cables (page_drawings, next_position_x = False, prev_position_x = False
         general_line.append(30)
     if prev_position_x:
         general_line.insert(0, 690)
+    print(general_line)
     if len(general_line) > 1:
         cables_list.extend(shape_horizontal_cable(119, general_line[0], general_line[-1]))
     '''Create horizontal sub_lines'''
@@ -41,7 +43,8 @@ def draw_cables (page_drawings, next_position_x = False, prev_position_x = False
 def draw_page(project: object, page: int):
     '''Drawing proteccions'''
     protec_drawings = list(Proteccions.query.filter_by(project_id=project.id, page=page).all())
-    next_protec = Proteccions.query.filter_by(project_id=project.id, page=page+1, position_y=660).first()
+    print(Proteccions.query.filter_by(project_id=project.id, page=page+1).all())
+    next_protec = Proteccions.query.filter_by(project_id=project.id, page=page+1, position_x=139).first()
     if page > 1:
         prev_protec = Proteccions.query.filter_by(project_id=project.id, page=page, position_y=660).first()
     else:
