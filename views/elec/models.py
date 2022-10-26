@@ -81,14 +81,14 @@ class House(db.Model):
         self.climate_outdoor_unit = new_house["climate_outdoor_unit"]
         self.climate_indoor_unit = new_house["climate_indoor_unit"]
 
-    def project(self):
+    def project(self) -> dict:
         house = {"author": Users.query.filter_by(id=self.user_id).first().name}
         for k,v in vars(self).items():
             if k[0] != "_" and k != "user_id" and v != None: #revisar
                 house[k] = v
         return house
     
-    def public(self):
+    def public(self) -> dict:
         return {"Proj. title": self.proj_title,
                 "Address": self.address,
                 "Square meeters": self.m2,

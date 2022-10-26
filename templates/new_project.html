@@ -22,7 +22,8 @@
       </div>
       <div class="col-sm">
         <label for="floors" class="form-label">Floors</label>
-        <input type="number" min="0" max="3" step="1" class="form-control" name="floors" id="floors" required>
+        <input type="number" min="1" max="3" step="1" class="form-control" name="floors" id="floors" required>
+        <label for="floors" style="color: #808080;">*Insert number 1 - 3</label>
       </div>
     </div>
   </div>
@@ -98,8 +99,8 @@
       </label>
     </div>
   </div>
-  <div class="mb-3">
-    <label class="form-label fw-bold">Do you have AC system?</label>
+  <div class="mb-2">
+      <label class="form-label fw-bold">Do you have AC system?</label>
   </div>
   <!-- <div class="mb-3">
     <input type="checkbox" class="form-check-input" id="has_air" aria-describedby="dateHelp" onclick="show_air()">
@@ -110,10 +111,12 @@
       <div class="col-sm">
         <label for="ou" class="form-label">Climate outdoor units</label>
         <input type="number" min="0" step="1" max="2" class="form-control" id="ou" name="climate_outdoor_unit" required>
+        <label for="ou" style="color: #808080;">*Inset number 0 - 3</label>
       </div>
       <div class="col-sm">
         <label for="iu" class="form-label">Climate indoor units</label>
         <input type="number" min="0" step="1" max="6" class="form-control" id="iu" name="climate_indoor_unit" required>
+        <label for="iu" style="color: #808080;">*Insert number 0 - 6</label>
       </div>
     </div>
   </div>

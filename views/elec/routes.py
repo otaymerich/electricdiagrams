@@ -1,15 +1,16 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for, make_response
 from auth_obj import Auth
 from views.elec.models import db, Users, House
-from views.pdf_generation.utils import create_project, organize_house
+from views.pdf_generation.utils import organize_house
 import io
 import PIL.Image as Image
+from sqlalchemy import delete
 
 elec = Blueprint("elec", __name__)
 test_auth = Auth(session, Users, "elec.t_login", "elec.home", request, db)
 
 '''
-HOME
+HOME PAGE
 '''
 @elec.route("/", methods=["GET", "POST"])
 @test_auth.auth
@@ -62,19 +63,35 @@ def t_show_projects():
 def t_profile():
     user = Users.query.filter_by(id=session.get("id")).first()
     if request.method == "POST":
+        name = request.form.get("name")
+        if name:
+            user.name = name
+        email = request.form.get("email")
+        if email:
+            user.email = email
         img = request.files.get("logo")
+        print(name, email, img)
         if img:
             img_extension = img.filename.rsplit(".")[-1]
             if img_extension == "png":
                 logo = img.read()
                 user.logo = logo
-                db.session.add(user)
-                db.session.commit()
+        db.session.add(user)
+        db.session.commit()
     logo = user.logo
-    image = Image.open(io.BytesIO(logo))
-    print(image)
-    return render_template("card.html", name=user.name, email=user.email, logo=image)
+    # logo = base64.b64encode(logo)
+    # print(logo)
+    # image = Image.open(io.BytesIO(logo))
+    return render_template("card.html", name=user.name, email=user.email, logo=logo)
 
+@elec.route("/delate/<house_id>", methods=["POST"])
+def t_delate_pdf(house_id):
+    if request.method == "POST":
+        house = db.session.query(House).filter(House.id==house_id).first()
+        db.session.delete(house)
+        db.session.commit()
+        return redirect(f"/projects")
+    return house_id
 
 
 @elec.route("/logout")

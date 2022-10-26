@@ -1,7 +1,12 @@
 from lib2to3.refactor import MultiprocessRefactoringTool
 from views.pdf_generation.models import db, Projects, Lines, Proteccions
 
-def actualize_line_page(line_number: int, page: int):
+'''
+SCRIPT FOR GENERATING THE DATA FOR EACH ELECTRIC SCHEME
+'''
+
+
+def actualize_line_page(line_number: int, page: int) -> tuple: #ASSIGNS THE NEXT LINE NUMBER AND CHECKS IF THERE IS A PAGE JUMP
     if line_number<7:
             line_number += 1
     else:
@@ -9,7 +14,7 @@ def actualize_line_page(line_number: int, page: int):
         page = page +1
     return line_number, page
 
-def organize_house(house: dict):
+def organize_house(house: dict) -> str: #GENERATES THE DICT WITH JSON FORMAT THATS GONA BE USED TO DRAW THE PDF AND SAVES THE DATA IN THE PDF.DB
     line_number = 1
     page = 1
     main_lines = {}

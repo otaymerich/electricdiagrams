@@ -5,6 +5,10 @@ import datetime
 # level_2 = 139
 # level_3 = 220
 
+'''
+SCRIPT FOR CREATING ALL THE "DRAWING OBJECTS" FOR PYMUPDF
+'''
+
 def shape_singlephase_cable(y: float) -> list:
     singlephase = [{'items': [], 'stroke_opacity': 1.0, 'color': (0.0, 0.0, 0.0), 'width': 0.0, 'lineCap': (0, 0, 0), 'lineJoin': 0.0, 'dashes': '[] 0', 'closePath': False, 'fill': None, 'fill_opacity': 1, 'even_odd': True}]
     items = [('l', Point(290, y), Point(406, y)), #cable
@@ -99,7 +103,7 @@ def text_frame(title, author, page) -> list:
     text_list.extend(add_textbox(580, 600, data(), (0,0,0)))
     return text_list
 
-def data():
+def data() -> str:
     days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
     months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
     date = datetime.datetime.now()
@@ -114,9 +118,6 @@ def text_line(line: object) -> list:
     text_list.append((Rect(Point(495, y1),Point(515, y2)), line.cable, (0,0,0)))
     text_list.append((Rect(Point(515, y1),Point(535, y2)), f'''{line.pols}x{line.seccion}''', (0,0,0)))
     return text_list
-
-def nex_page(level):
-    pass
 
 
 if __name__ == "__main__":

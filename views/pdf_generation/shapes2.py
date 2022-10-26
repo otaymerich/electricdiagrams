@@ -8,6 +8,11 @@ from views.pdf_generation.models import db, Proteccions, Projects, Lines
 from views.elec.models import Users
 from flask import session
 
+'''
+SCRIPT FOR COMPOSING THE PAGES OF THE PDF DOCUMENT
+'''
+
+
 def draw_cables (page_drawings, next_position_x = False, prev_position_x = False):
     '''Create horizontal line for multiple entrances of power'''
     entrance_line = list(filter(lambda protec: protec if protec.position_x==48  else None, page_drawings))
@@ -144,19 +149,20 @@ def create_pdf(project):
     '''
     insert company logo
     #'''
-    user = Users.query.filter_by(id=session.get("id")).first()
-    if user.logo:
-        rect = fitz.Rect(537,612,583,830)
-        img = user.logo
-        img_xref = 0
-        for page in doc:
-            img_xref = page.insert_image(rect, stream=img, xref=img_xref, rotate=90, keep_proportion=True)
+    for page in doc:
+        user = Users.query.filter_by(id=session.get("id")).first()
+        if user.logo:
+            rect = fitz.Rect(537,612,583,830)
+            img = user.logo
+            img_xref = 0
+            page.insert_image(rect, stream=img, xref=img_xref, rotate=90, keep_proportion=True)
+
+
 
     
     root = tk.Tk()
     root.withdraw()
     file_path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("pdf file","*.pdf")])
-    print(file_path)
     doc.save(file_path)
     doc.close()
     print(fitz.__doc__)

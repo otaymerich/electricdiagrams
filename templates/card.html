@@ -1,20 +1,44 @@
 {%extends "base.html"%}
 
 {%block main%}
-<div class="d-grid gap-3">
-  <div class="card p-2 text-center" style="width: 18rem;">
+<div class="d-grid gap-3 ">
+    <div class="card p-2 text-center" style="width: 18rem;">
     <img src={{logo}} class="card-img-top" alt="Insert logo">
     <div class="card-body">
-      <h5 class="card-title">{{name}}</h5>
-      <p class="card-text">{{email}}</p>
-      <a href="#" class="btn btn-primary">Edit profile</a>
+        <h5 class="card-title">{{name}}</h5>
+        <p class="card-text">{{email}}</p>
+        <a id="edit" href="#" class="btn btn-primary" onclick="show_edit()">Edit profile</a>
     </div>
-  </div>
-<form method="POST" enctype="multipart/form-data">
-  <div class="w-auto input-group">
-    <label for="formFile" class="form-label"></label>
-    <input type="file" class="form-control" id="formFile" name="logo">
-    <button class="btn btn-outline-secondary" type="submit">Button</button>
-  </div>
-</form>
+</div>
+<div class="row">
+    <form id="form" method="POST" enctype="multipart/form-data" style="display: none;">
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">New name</label>
+            <input type="text" class="form-control" name="name" aria-describedby="textHelp">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">New email address</label>
+            <input type="email" class="form-control" name="email" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="formFile" class="form-label">Insert company logo in png format</label>
+            <input type="file" class="form-control" id="formFile" name="logo">
+        </div>
+        <button class="btn btn-primary me-md-5" type="submit">Save Changes</button>
+        <a class="btn btn-danger" onclick="hide_edit()">Cancel Changes</a>
+    </form>
+</div>
+    
+    <script>
+    const form = document.querySelector("#form");
+    const edit = document.querySelector("#edit")
+    function show_edit() {
+        form.style.display = "block";
+        edit.style.display = "none";
+    }
+    function hide_edit() {
+        form.style.display = "none";
+        edit.style.display = "block";
+    }
+</script>
 {%endblock%}

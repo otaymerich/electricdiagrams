@@ -6,12 +6,13 @@ from views.pdf_generation.shapes2 import create_pdf
 pdf = Blueprint("pdf", __name__)
 
 @pdf.route("/project/<house_id>", methods=["POST"])
-def t_pay_debt(house_id):
+def t_create_pdf(house_id):
     if request.method == "POST":
         project = Projects.query.filter_by(house_id=house_id).first()
-        print(project.id)
         create_pdf(project)
         return house_id
+
+
 
 @pdf.route("/test2")
 def t_test():
