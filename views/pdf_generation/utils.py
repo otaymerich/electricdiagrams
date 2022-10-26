@@ -1,4 +1,3 @@
-from lib2to3.refactor import MultiprocessRefactoringTool
 from views.pdf_generation.models import db, Projects, Lines, Proteccions
 
 '''
@@ -20,9 +19,8 @@ def organize_house(house: dict) -> str: #GENERATES THE DICT WITH JSON FORMAT THA
     main_lines = {}
     keys = house.keys()
     if "pool" in keys:
-        pool = add_pool(line_number, page)
+        pool, line_number, page = add_pool(line_number, page)
         main_lines["pool"] = pool
-        line_number, page = actualize_line_page(line_number, page)
     if "garden" in keys:
         garden, line_number, page = add_garden(line_number, page)
         main_lines["garden"] = garden
@@ -79,164 +77,6 @@ def organize_house(house: dict) -> str: #GENERATES THE DICT WITH JSON FORMAT THA
     create_project(data["data"])
     return "Success"
 
-def add_pool(line_number, page):
-    pool = {"head_proteccion": {
-                "position_x": 139,
-                "position_y": 760-100*line_number,
-                "protec_type": "D",
-                "pols": 2,
-                "ampere": 40,
-                "description": "300mA\nTipo AC-S",
-                "page": page},
-            "sub_lines":{0:{
-                "proteccion":{
-                    "position_x": 220,
-                    "position_y": 760-100*line_number,
-                    "protec_type": "M",
-                    "pols": 2,
-                    "ampere": 20,
-                    "description": "C",
-                    "page": page},
-                "line":{
-                    "position_y": 760-100*line_number,
-                    "pols": 2,
-                    "page": page,
-                    "line_number": f"L{line_number}",
-                    "description": "Sbq. Piscina",
-                    "cable": "RZ1-K",
-                    "seccion": "4mm"}}
-            }
-    } 
-    return pool
-
-def add_generallines(floors, m2, line_number, page):
-    if floors == 1 and m2 > 300:
-        n = 2
-    else:
-        n = floors
-    general_lines = {}
-    for i in range(n):
-        general_lines[i] = {"head_proteccion": {
-                    "position_x": 139,
-                    "position_y": 760-100*line_number,
-                    "protec_type": "D",
-                    "pols": 2,
-                    "ampere": 40,
-                    "description": "30mA\nTipo AC",
-                    "page": page},
-                "sub_lines":{0:{
-                    "proteccion":{
-                        "position_x": 220,
-                        "position_y": 760-100*line_number,
-                        "protec_type": "M",
-                        "pols": 2,
-                        "ampere": 10,
-                        "description": "C",
-                        "page": page},
-                    "line":{
-                        "position_y": 760-100*line_number,
-                        "pols": 2,
-                        "page": page,
-                        "line_number": f"L{line_number+(7*(page-1))}",
-                        "description": f"Luces interiores {i+1}",
-                        "cable": "H07Z1-K",
-                        "pols": 2,
-                        "seccion": "1,5mm"}}
-                }
-        }
-        line_number, page = actualize_line_page(line_number, page)
-        general_lines[i]["sub_lines"][1] = {
-                "proteccion":{
-                    "position_x": 220,
-                    "position_y": 760-100*line_number,
-                    "protec_type": "M",
-                    "pols": 2,
-                    "ampere": 16,
-                    "description": "C",
-                    "page": page},
-                "line":{
-                    "position_y": 760-100*line_number,
-                    "pols": 2,
-                    "page": page,
-                    "line_number": f"L{line_number+(7*(page-1))}",
-                    "description": f"Enchufes interiores {i+1}",
-                    "cable": "H07Z1-K",
-                    "pols": 2,
-                    "seccion": "2,5mm"}}
-        line_number, page = actualize_line_page(line_number, page)
-        general_lines[i]["sub_lines"][2] = {
-                "proteccion":{
-                    "position_x": 220,
-                    "position_y": 760-100*line_number,
-                    "protec_type": "M",
-                    "pols": 2,
-                    "ampere": 16,
-                    "description": "C",
-                    "page": page},
-                "line":{
-                    "position_y": 760-100*line_number,
-                    "pols": 2,
-                    "page": page,
-                    "line_number": f"L{line_number+(7*(page-1))}",
-                    "description": f"Enchufes humedos {i+1}",
-                    "cable": "H07Z1-K",
-                    "pols": 2,
-                    "seccion": "2,5mm"}}
-        line_number, page = actualize_line_page(line_number, page)
-    return general_lines, line_number, page
-
-def add_garden(line_number, page):
-    garden = {"head_proteccion": {
-                "position_x": 139,
-                "position_y": 760-100*line_number,
-                "protec_type": "D",
-                "pols": 2,
-                "ampere": 40,
-                "description": "30mA\nTipo AC",
-                "page": page},
-            "sub_lines":{0:{
-                "proteccion":{
-                    "position_x": 220,
-                    "position_y": 760-100*(line_number),
-                    "protec_type": "M",
-                    "pols": 2,
-                    "ampere": 10,
-                    "description": "C",
-                    "page": page},
-                "line":{
-                    "position_y": 760-100*(line_number),
-                    "pols": 2,
-                    "page": page,
-                    "line_number": f"L{line_number+(7*(page-1))}",
-                    "description": "Luz exterior",
-                    "cable": "RZ1-K",
-                    "pols": 2,
-                    "seccion": "2,5mm"}
-            }}
-    }
-    line_number, page = actualize_line_page(line_number, page)
-    garden["sub_lines"][1] = {
-                "proteccion":{
-                    "position_x": 220,
-                    "position_y": 760-100*line_number,
-                    "protec_type": "M",
-                    "pols": 2,
-                    "ampere": 16,
-                    "description": "C",
-                    "page": page},
-                "line":{
-                    "position_y": 760-100*line_number,
-                    "pols": 2,
-                    "page": page,
-                    "line_number": f"L{line_number+(7*(page-1))}",
-                    "description": "Enchufes exteriores",
-                    "cable": "RZ1-K",
-                    "pols": 2,
-                    "seccion": "2,5mm"}}
-
-    line_number, page = actualize_line_page(line_number, page)
-    return garden, line_number, page
-
 def add_entrance(data):
     if len(data["lines"])<4:
         ampere = 20
@@ -258,13 +98,44 @@ def add_entrance(data):
             "page": 1}
 
 def add_solar():
-        return {"position_x": 48,
-            "position_y": 560,
-            "protec_type": "M",
-            "pols": 2,
-            "ampere": 20,
-            "description": "Solar",
-            "page": 1}
+    return {"position_x": 48,
+        "position_y": 560,
+        "protec_type": "M",
+        "pols": 2,
+        "ampere": 20,
+        "description": "Solar",
+        "page": 1}
+
+def add_pool(line_number: int, page: int) -> tuple:
+    pool = create_head_proteccion(2, "300mA\nTipo AC-S", line_number, page)
+    pool["sub_lines"].update(create_sub_line(0, 2, 20, "Sbq. Piscina", "RZ1-K", "4mm", line_number, page))
+    line_number, page = actualize_line_page(line_number, page)
+    return pool, line_number, page
+
+def add_generallines(floors, m2, line_number, page):
+    if floors == 1 and m2 > 300:
+        n = 2
+    else:
+        n = floors
+    general_lines = {}
+    for i in range(n):
+        general_lines[i] = create_head_proteccion(2, "30mA\nTipo AC", line_number, page)
+        general_lines[i]["sub_lines"].update(create_sub_line(0, 2, 10, f"Luces interiores {i+1}", "H07Z1-K", "1,5mm", line_number, page))
+        line_number, page = actualize_line_page(line_number, page)
+        general_lines[i]["sub_lines"].update(create_sub_line(1, 2, 16, f"Enchufes interiores {i+1}", "H07Z1-K", "2,5mm", line_number, page))
+        line_number, page = actualize_line_page(line_number, page)
+        general_lines[i]["sub_lines"].update(create_sub_line(2, 2, 16, f"Enchufes humedos {i+1}", "H07Z1-K", "2,5mm", line_number, page))
+        line_number, page = actualize_line_page(line_number, page)
+    return general_lines, line_number, page
+
+def add_garden(line_number, page):
+    garden = create_head_proteccion(2, "30mA\nTipo AC", line_number, page)
+    garden["sub_lines"].update(create_sub_line(0, 2, 10, "Luz exterior", "RZ1-K", "1,5mm", line_number, page))
+    line_number, page = actualize_line_page(line_number, page)
+    garden["sub_lines"].update(create_sub_line(1, 2, 16, "Enchufes exteriores", "RZ1-K", "2,5mm", line_number, page))
+    line_number, page = actualize_line_page(line_number, page)
+    return garden, line_number, page
+
 
 def add_cleaning(cleaning: list, line_number, page):
     clean = {"head_proteccion": {
@@ -629,6 +500,39 @@ def add_car(line_number, page):
     line_number, page = actualize_line_page(line_number, page)
     return car, line_number, page
 
+
+def create_head_proteccion(pols: int, description: str, line_number, page):
+    head_proteccion =  {"head_proteccion": {
+                "position_x": 139,
+                "position_y": 760-100*line_number,
+                "protec_type": "D",
+                "pols": pols,
+                "ampere": 40,
+                "description": description,
+                "page": page},
+            "sub_lines":{}
+    }
+    return head_proteccion
+
+def create_sub_line(n_subline: int, pols: int, ampere: int, line_description: str, cable: str, seccion: str, line_number: int, page: int):
+    return {n_subline:{
+                "proteccion":{
+                    "position_x": 220,
+                    "position_y": 760-100*line_number,
+                    "protec_type": "M",
+                    "pols": pols,
+                    "ampere": ampere,
+                    "description": "C",
+                    "page": page},
+                "line":{
+                    "position_y": 760-100*line_number,
+                    "pols": pols,
+                    "page": page,
+                    "line_number": f"L{line_number+(7*(page-1))}",
+                    "description": line_description,
+                    "cable": cable,
+                    "seccion": seccion}}
+    }
 
 def create_project(data: dict):
     proj_desc = data["proj_description"]
