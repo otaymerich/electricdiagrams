@@ -6,7 +6,7 @@ SCRIPT FOR GENERATING THE DATA FOR EACH ELECTRIC SCHEME
 
 
 def actualize_line_page(line_number: int, page: int) -> tuple: #ASSIGNS THE NEXT LINE NUMBER AND CHECKS IF THERE IS A PAGE JUMP
-    if line_number<7:
+    if line_number < 7:
             line_number += 1
     else:
         line_number = 1
@@ -87,8 +87,8 @@ def add_entrance(data):
     pols = 2
     for line in data["lines"].values():
         if line["head_proteccion"]["pols"] == 4:
-                    pols = 4
-                    break
+            pols = 4
+            break
     return {"position_x": 48,
             "position_y": 660,
             "protec_type": "M",
@@ -138,15 +138,7 @@ def add_garden(line_number, page):
 
 
 def add_cleaning(cleaning: list, line_number, page):
-    clean = {"head_proteccion": {
-                "position_x": 139,
-                "position_y": 760-100*line_number,
-                "protec_type": "D",
-                "pols": 2,
-                "ampere": 40,
-                "description": "30mA\nTipo AC",
-                "page": page},
-            "sub_lines":{}}
+    clean = create_head_proteccion(2, "30mA\nTipo AC", line_number, page)
     for n, i in enumerate(cleaning):
         if i == "iron":
             name = "Plancha"
@@ -154,352 +146,110 @@ def add_cleaning(cleaning: list, line_number, page):
             name = "Lavadora"
         elif i == "dryer":
             name = "Secadora"
-        clean["sub_lines"][n] = {
-                "proteccion":{
-                    "position_x": 220,
-                    "position_y": 760-100*line_number,
-                    "protec_type": "M",
-                    "pols": 2,
-                    "ampere": 16,
-                    "description": "C",
-                    "page": page},
-                "line":{
-                    "position_y": 760-100*line_number,
-                    "pols": 2,
-                    "page": page,
-                    "line_number": f"L{line_number+(7*(page-1))}",
-                    "description": name,
-                    "cable": "H07Z1-K",
-                    "pols": 2,
-                    "seccion": "2,5mm"}}
+        clean["sub_lines"].update(create_sub_line(n, 2, 16, name, "H07Z1-K", "2,5mm", line_number, page))
         line_number, page = actualize_line_page(line_number, page)
     return clean, line_number, page
 
 def add_heating_system(system: str, line_number, page):
-    heating_system = {"head_proteccion": {
-                "position_x": 139,
-                "position_y": 760-100*line_number,
-                "protec_type": "D",
-                "pols": 2,
-                "ampere": 40,
-                "description": "30mA\nTipo AC",
-                "page": page},
-            "sub_lines":{0:{
-                "proteccion":{
-                    "position_x": 220,
-                    "position_y": 760-100*line_number,
-                    "protec_type": "M",
-                    "pols": 2,
-                    "ampere": 16,
-                    "description": "C",
-                    "page": page},
-                "line":{
-                    "position_y": 760-100*line_number,
-                    "pols": 2,
-                    "page": page,
-                    "line_number": f"L{line_number+(7*(page-1))}",
-                    "description": f"{system}",
-                    "cable": "RZ1-K",
-                    "seccion": "2,5mm"}}
-            }
-    }
+    heating_system = create_head_proteccion(2, "30mA\nTipo AC", line_number, page)
     if system == "Boiler":
-        heating_system["sub_lines"][0]["line"]["description"] = "Caldera"
-    if system == "Aerothermia":
+        heating_system["sub_lines"].update(create_sub_line(0, 2, 16, "Caldera", "H07Z1-K", "2,5mm", line_number, page))
+    elif system == "Aerothermia":
+        heating_system["sub_lines"].update(create_sub_line(0, 2, 25, "Aerotérmia", "H07Z1-K", "4mm", line_number, page))
         heating_system["head_proteccion"]["description"] = "30mA\nTipo SI"
-        heating_system["sub_lines"][0]["line"]["description"] = "Aerotermia"
-        heating_system["sub_lines"][0]["proteccion"]["ampere"] = 25
-        heating_system["sub_lines"][0]["line"]["seccion"] = "4mm"
-    if system == "Electric heater":
-        heating_system["sub_lines"][0]["line"]["description"] = "Termo eléctrico"
-        heating_system["sub_lines"][0]["proteccion"]["ampere"] = 20
-        heating_system["sub_lines"][0]["line"]["seccion"] = "4mm"
+    elif system == "Electric heater":
+        heating_system["sub_lines"].update(create_sub_line(0, 2, 20, "Termo eléctrico", "H07Z1-K", "4mm", line_number, page))
     line_number, page = actualize_line_page(line_number, page)
     return heating_system, line_number, page
 
 def add_clima(outdoor: int, indoor: int, line_number: int, page: int):
     clima_lines = {}
     if outdoor != 0:
-        clima_lines[1] = clima_head_protec(1, line_number, page)
+        clima_lines[1] = create_head_proteccion(2, "30mA\nTipo SI", line_number, page)
+        clima_lines[1]["sub_lines"].update(create_sub_line(0, 2, 16, "Unidad exterior 1", "RZ1-K", "2,5mm", line_number, page))
         line_number, page = actualize_line_page(line_number, page)
     if outdoor == 0 or outdoor == 1:
         if outdoor == 0:
-            clima_lines[1] = {"head_proteccion": {
-                    "position_x": 139,
-                    "position_y": 760-100*line_number,
-                    "protec_type": "D",
-                    "pols": 2,
-                    "ampere": 40,
-                    "description": "30mA\nTipo SI",
-                    "page": page},
-                "sub_lines":{}
-                }
+            clima_lines[1] = create_head_proteccion(2, "30mA\nTipo SI", line_number, page)
         if indoor >= 4:
             indoor1 = int(indoor/2) if indoor % 2 == 0 else int(indoor/2 + 1)
             indoor2 = indoor - indoor1
             for i in range(indoor1):
                 unit_number = i + 1
                 i = i +1 if i in clima_lines[1]["sub_lines"].keys() else i
-                clima_lines[1]["sub_lines"][i] = clima_final_line(unit_number, line_number, page)
+                clima_lines[1]["sub_lines"].update(create_sub_line(i, 2, 16, f"Unidad interior {unit_number}", "RZ1-K", "2,5mm", line_number, page))
                 line_number, page = actualize_line_page(line_number, page)
-            clima_lines[2] = {"head_proteccion": {
-                "position_x": 139,
-                "position_y": 760-100*line_number,
-                "protec_type": "D",
-                "pols": 2,
-                "ampere": 40,
-                "description": "30mA\nTipo SI",
-                "page": page},
-            "sub_lines":{}
-            }
+            clima_lines[2] = create_head_proteccion(2, "30mA\nTipo SI", line_number, page)
             for i in range(indoor2):
                 unit_number = indoor1 + i + 1
-                clima_lines[2]["sub_lines"][i] = clima_final_line(unit_number, line_number, page)
+                clima_lines[2]["sub_lines"].update(create_sub_line(i, 2, 16, f"Unidad interior {unit_number}", "RZ1-K", "2,5mm", line_number, page))
                 line_number, page = actualize_line_page(line_number, page)
         else:
             for i in range(indoor):
                 unit_number = i + 1
                 i = i +1 if i in clima_lines[1]["sub_lines"].keys() else i
-                clima_lines[1]["sub_lines"][i] = clima_final_line(unit_number, line_number, page)
+                clima_lines[1]["sub_lines"].update(create_sub_line(i, 2, 16, f"Unidad interior {unit_number}", "RZ1-K", "2,5mm", line_number, page))
                 line_number, page = actualize_line_page(line_number, page)
     elif outdoor == 2:
         indoor1 = int(indoor/2) if indoor % 2 == 0 else int(indoor/2 + 1)
         indoor2 = indoor - indoor1
         for i in range(indoor1):
             unit_number = i + 1
-            clima_lines[1]["sub_lines"][i+1] = clima_final_line(unit_number, line_number, page)
+            clima_lines[1]["sub_lines"].update(create_sub_line(i+1, 2, 16, f"Unidad interior {unit_number}", "RZ1-K", "2,5mm", line_number, page))
             line_number, page = actualize_line_page(line_number, page)
-        clima_lines[2] = clima_head_protec(2, line_number, page)
+        clima_lines[2] = create_head_proteccion(2, "30mA\nTipo SI", line_number, page)
+        clima_lines[2]["sub_lines"].update(create_sub_line(0, 2, 16, "Unidad exterior 2", "RZ1-K", "2,5mm", line_number, page))
         line_number, page = actualize_line_page(line_number, page)
         for i in range(indoor2):
             unit_number = indoor1 + i + 1
-            clima_lines[2]["sub_lines"][i+1] = clima_final_line(unit_number, line_number, page)
+            clima_lines[2]["sub_lines"].update(create_sub_line(i+1, 2, 16, f"Unidad interior {unit_number}", "RZ1-K", "2,5mm", line_number, page))
             line_number, page = actualize_line_page(line_number, page)
     return clima_lines, line_number, page
 
-def clima_head_protec(num_unitat, line_number, page):
-    return {"head_proteccion": {
-                "position_x": 139,
-                "position_y": 760-100*line_number,
-                "protec_type": "D",
-                "pols": 2,
-                "ampere": 40,
-                "description": "30mA\nTipo SI",
-                "page": page},
-            "sub_lines":{0:{
-                "proteccion":{
-                    "position_x": 220,
-                    "position_y": 760-100*line_number,
-                    "protec_type": "M",
-                    "pols": 2,
-                    "ampere": 16,
-                    "description": "C",
-                    "page": page},
-                "line":{
-                    "position_y": 760-100*line_number,
-                    "pols": 2,
-                    "page": page,
-                    "line_number": f"L{line_number+(7*(page-1))}",
-                    "description": f"Unidad exterior {num_unitat}",
-                    "cable": "RZ1-K",
-                    "seccion": "2,5mm"}}
-    }}
-
-def clima_final_line(unit_number, line_number, page):
-    return {
-        "proteccion":{
-            "position_x": 220,
-            "position_y": 760-100*line_number,
-            "protec_type": "M",
-            "pols": 2,
-            "ampere": 16,
-            "description": "C",
-            "page": page},
-        "line":{
-            "position_y": 760-100*line_number,
-            "pols": 2,
-            "page": page,
-            "line_number": f"L{line_number+(7*(page-1))}",
-            "description": f"Unidad interior {unit_number}",
-            "cable": "RZ1-K",
-            "seccion": "1,5mm"}}
-
 def add_kitchen_1(elements: list, line_number: int, page: int):
-    kitchen = {"head_proteccion": {
-                "position_x": 139,
-                "position_y": 760-100*line_number,
-                "protec_type": "D",
-                "pols": 2,
-                "ampere": 40,
-                "description": "30mA\nTipo SI",
-                "page": page},
-            "sub_lines":{}
-            }
+    kitchen = create_head_proteccion(2, "30mA\nTipo SI", line_number, page)
     for n, element in enumerate(elements):
         if element == "fridge":
             name = "Nevera"
         elif element == "freezer":
             name = "Congelador"
-        kitchen["sub_lines"][n] = {
-                "proteccion":{
-                    "position_x": 220,
-                    "position_y": 760-100*line_number,
-                    "protec_type": "M",
-                    "pols": 2,
-                    "ampere": 16,
-                    "description": "C",
-                    "page": page},
-                "line":{
-                    "position_y": 760-100*line_number,
-                    "pols": 2,
-                    "page": page,
-                    "line_number": f"L{line_number+(7*(page-1))}",
-                    "description": f"{name}",
-                    "cable": "RZ1-K",
-                    "pols": 2,
-                    "seccion": "2,5mm"}}
+        kitchen["sub_lines"].update(create_sub_line(n, 2, 16, name, "H07Z1-K", "2,5mm", line_number, page))
         line_number, page = actualize_line_page(line_number, page)
     return kitchen, line_number, page
 
 def add_kitchen_2(elements: list, line_number:int, page: int):
-    kitchen = {"head_proteccion": {
-                "position_x": 139,
-                "position_y": 760-100*line_number,
-                "protec_type": "D",
-                "pols": 2,
-                "ampere": 40,
-                "description": "30mA\nTipo AC",
-                "page": page},
-            "sub_lines":{}
-            }
+    kitchen = create_head_proteccion(2, "30mA\nTipo AC", line_number, page)
     for n, element in enumerate(elements):
-        kitchen["sub_lines"][n] = {
-                "proteccion":{
-                    "position_x": 220,
-                    "position_y": 760-100*line_number,
-                    "protec_type": "M",
-                    "pols": 2,
-                    "ampere": 16,
-                    "description": "C",
-                    "page": page},
-                "line":{
-                    "position_y": 760-100*line_number,
-                    "pols": 2,
-                    "page": page,
-                    "line_number": f"L{line_number+(7*(page-1))}",
-                    "description": "",
-                    "cable": "RZ1-K",
-                    "pols": 2,
-                    "seccion": "2,5mm"}}
         if element == "oven":
-            kitchen["sub_lines"][n]["line"]["description"] = "Horono"
-            kitchen["sub_lines"][n]["proteccion"]["ampere"] = 20
-            kitchen["sub_lines"][n]["line"]["seccion"] = "4mm"
+            kitchen["sub_lines"].update(create_sub_line(n, 2, 20, "Horno", "H07Z1-K", "4mm", line_number, page))
         elif element == "dishwasher":
-            kitchen["sub_lines"][n]["line"]["description"] = "Lavaplatos"
+            kitchen["sub_lines"].update(create_sub_line(n, 2, 16, "Lavaplatos", "H07Z1-K", "2,5mm", line_number, page))
         line_number, page = actualize_line_page(line_number, page)
     return kitchen, line_number, page
         
-
 def add_vitro(line_number, page):
-    vitro =  {"head_proteccion": {
-                "position_x": 139,
-                "position_y": 760-100*line_number,
-                "protec_type": "D",
-                "pols": 4,
-                "ampere": 40,
-                "description": "30mA\nTipo SI",
-                "page": page},
-            "sub_lines":{0:{
-                "proteccion":{
-                    "position_x": 220,
-                    "position_y": 760-100*line_number,
-                    "protec_type": "M",
-                    "pols": 4,
-                    "ampere": 16,
-                    "description": "C",
-                    "page": page},
-                "line":{
-                    "position_y": 760-100*line_number,
-                    "pols": 4,
-                    "page": page,
-                    "line_number": f"L{line_number+(7*(page-1))}",
-                    "description": "Vitrocerámica",
-                    "cable": "RZ1-K",
-                    "seccion": "2,5mm"}}
-    }}
+    vitro = create_head_proteccion(4, "30mA\nTipo SI", line_number, page)
+    vitro["sub_lines"].update(create_sub_line(0, 4, 16, "Vitrocerámica", "RZ1-K", "2,5mm", line_number, page))
     line_number, page = actualize_line_page(line_number, page)
     return vitro, line_number, page
 
 def add_extras(elements, line_number, page):
-    extra = {"head_proteccion": {
-                "position_x": 139,
-                "position_y": 760-100*line_number,
-                "protec_type": "D",
-                "pols": 2,
-                "ampere": 40,
-                "description": "30mA\nTipo SI",
-                "page": page},
-            "sub_lines":{}
-            }
+    extra = create_head_proteccion(2, "30mA\nTipo SI", line_number, page)
     for n, element in enumerate(elements):
-        extra["sub_lines"][n] = {
-                "proteccion":{
-                    "position_x": 220,
-                    "position_y": 760-100*line_number,
-                    "protec_type": "M",
-                    "pols": 2,
-                    "ampere": 10,
-                    "description": "C",
-                    "page": page},
-                "line":{
-                    "position_y": 760-100*line_number,
-                    "pols": 2,
-                    "page": page,
-                    "line_number": f"L{line_number+(7*(page-1))}",
-                    "description": "",
-                    "cable": "RZ1-K",
-                    "pols": 2,
-                    "seccion": "1,5mm"}}
         if element == "alarm":
-            extra["sub_lines"][n]["line"]["description"] = "Alarma"
+            extra["sub_lines"].update(create_sub_line(n, 2, 10, "Alarma", "H07Z1-K", "1,5mm", line_number, page))
         elif element == "electronics":
-            extra["sub_lines"][n]["line"]["description"] = "Aparatos electrónicos"
+            extra["sub_lines"].update(create_sub_line(n, 2, 10, "Electrónica", "H07Z1-K", "1,5mm", line_number, page))
         elif element == "domotics":
-            extra["sub_lines"][n]["line"]["description"] = "Control domótico"    
+            extra["sub_lines"].update(create_sub_line(n, 2, 10, "Domótica", "H07Z1-K", "1,5mm", line_number, page))
         line_number, page = actualize_line_page(line_number, page)
     return extra, line_number, page
 
 def add_car(line_number, page):
-    car =  {"head_proteccion": {
-                "position_x": 139,
-                "position_y": 760-100*line_number,
-                "protec_type": "D",
-                "pols": 4,
-                "ampere": 40,
-                "description": "30mA\nTipo SI",
-                "page": page},
-            "sub_lines":{0:{
-                "proteccion":{
-                    "position_x": 220,
-                    "position_y": 760-100*line_number,
-                    "protec_type": "M",
-                    "pols": 4,
-                    "ampere": 20,
-                    "description": "C",
-                    "page": page},
-                "line":{
-                    "position_y": 760-100*line_number,
-                    "pols": 4,
-                    "page": page,
-                    "line_number": f"L{line_number+(7*(page-1))}",
-                    "description": "Carg. coche eléctrico",
-                    "cable": "RZ1-K",
-                    "seccion": "4mm"}}
-    }}
+    car =   create_head_proteccion(4, "30mA\nTipo SI", line_number, page)
+    car["sub_lines"].update(create_sub_line(0, 4, 20, "Carg. coche eléctrico", "RZ1-K", "4mm", line_number, page))
     line_number, page = actualize_line_page(line_number, page)
     return car, line_number, page
-
 
 def create_head_proteccion(pols: int, description: str, line_number, page):
     head_proteccion =  {"head_proteccion": {
@@ -547,7 +297,6 @@ def create_project(data: dict):
     for entrance in data["power_entrance"].values():
         create_proteccion(entrance, proj_desc["project_id"])
     create_lines(data["lines"], proj_desc["project_id"])
-    
 
 def create_lines(lines: dict, proj_id: str):
     for line in lines.values():

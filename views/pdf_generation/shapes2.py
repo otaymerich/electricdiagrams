@@ -1,8 +1,6 @@
-from fileinput import filename
 import fitz
 from fitz import Point, Rect
 from views.pdf_generation.shapes import text_line,create_frame, shape_singlephase_cable, shape_threephase_cable, text_frame,shape_diferencial, shape_horizontal_cable, shape_line, shape_magneto, shape_rectangle, add_textbox
-import tkinter as tk
 from tkinter import filedialog
 from views.pdf_generation.models import db, Proteccions, Projects, Lines
 from views.elec.models import Users
@@ -12,8 +10,7 @@ from flask import session
 SCRIPT FOR COMPOSING THE PAGES OF THE PDF DOCUMENT
 '''
 
-
-def draw_cables (page_drawings, next_position_x = False, prev_position_x = False):
+def draw_cables (page_drawings: list, next_position_x = False, prev_position_x = False) -> list:
     print(next_position_x, prev_position_x)
     '''Create horizontal line for multiple entrances of power'''
     entrance_line = list(filter(lambda protec: protec if protec.position_x==48  else None, page_drawings))
@@ -47,8 +44,10 @@ def draw_cables (page_drawings, next_position_x = False, prev_position_x = False
             cables_list.extend(shape_horizontal_cable(200, 60, 30))
     return cables_list
 
-def draw_page(project: object, page: int):
-    '''Drawing proteccions'''
+def draw_page(project: object, page: int) -> tuple:
+    '''
+    Drawing proteccions
+    '''
     protec_drawings = list(Proteccions.query.filter_by(project_id=project.id, page=page).all())
     next_protec = Proteccions.query.filter_by(project_id=project.id, page=page+1, position_x=139).first()
     if page > 1:
@@ -81,7 +80,9 @@ def draw_page(project: object, page: int):
             text = f"Placas solares\n\n{protec.pols}P\n{protec.ampere}A\nC"
             x = x-20
         text_list.extend([(Point(x+10, y-10), text, (0,0,1))])
-    '''Drawing lines'''
+    '''
+    Drawing lines
+    '''
     line_drawings = list(Lines.query.filter_by(project_id=project.id, page=page).all())
     for line in line_drawings:
         if line.pols == 2:
@@ -92,7 +93,7 @@ def draw_page(project: object, page: int):
         text_list.extend(text_line(line))
     return draw_list, text_list
 
-def create_pdf(project):
+def create_pdf(project: object):
     '''
     open document
     '''
@@ -109,7 +110,6 @@ def create_pdf(project):
         draw the entries from draw_list
         '''
         for path in draw_list:
-            # print(path)
             for item in path["items"]:  # these are the draw commands
                 if item[0] == "l":  # line   
                     shape.draw_line(item[1], item[2])
@@ -159,49 +159,12 @@ def create_pdf(project):
             img_xref = 0
             page.insert_image(rect, stream=img, xref=img_xref, rotate=90, keep_proportion=True)
 
-
-
-    
-    root = tk.Tk()
-    root.withdraw()
     file_path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("pdf file","*.pdf")])
-    doc.save(file_path)
+    if file_path:
+        doc.save(file_path)
     doc.close()
     print(fitz.__doc__)
 
 
 if __name__ == "__main__":
     pass
-    # new_proteccion = {"posicion": 1, "type": "M", "pols": 2, "ampere": 40, "description": "C", "page":1}
-    # new_proteccion1 = {"posicion": 3, "type": "D", "pols": 2, "ampere": 40, "description": "30mA\nTipo AC", "page":1}
-    # new_proteccion2 = {"posicion": 10, "type": "M", "pols": 2, "ampere": 10, "description": "C", "page":1}
-    # new_proteccion3 = {"posicion": 11, "type": "M", "pols": 2, "ampere": 16, "description": "C", "page":1}
-    # new_proteccion4 = {"posicion": 5, "type": "D", "pols": 2, "ampere": 40, "description": "30mA\nTipo AC", "page":1}
-    # new_proteccion5 = {"posicion": 12, "type": "M", "pols": 2, "ampere": 10, "description": "C", "page":1}
-    # new_proteccion6 = {"posicion": 13, "type": "M", "pols": 2, "ampere": 16, "description": "C", "page":1}
-    # new_proteccion7 = {"posicion": 7, "type": "D", "pols": 2, "ampere": 40, "description": "30mA\nTipo AC", "page":1}
-    # new_proteccion8 = {"posicion": 14, "type": "M", "pols": 2, "ampere": 16, "description": "C", "page":1}
-    # new_proteccion9 = {"posicion": 15, "type": "M", "pols": 2, "ampere": 16, "description": "C", "page":1}
-
-
-    # new_line = {"posicion": 2, "pols": "2", "page": 1, "lineid": "L1", "description": "Luces", "cabletype": "H05V-K", "seccion":"1,5mm"}
-    # new_line1 = {"posicion": 3, "pols": "2", "page": 1, "lineid": "L2", "description": "Enchufes", "cabletype": "H05V-K", "seccion":"2,5mm"}
-    # new_line2 = {"posicion": 4, "pols": "2", "page": 1, "lineid": "L3", "description": "Luces", "cabletype": "H05V-K", "seccion":"1,5mm"}
-    # new_line3 = {"posicion": 5, "pols": "2", "page": 1, "lineid": "L4", "description": "Enchufes", "cabletype": "H05V-K", "seccion":"2,5mm"}
-    # new_line4 = {"posicion": 1, "pols": "2", "page": 1, "lineid": "LA", "description": "Alimentación", "cabletype": "H05V-K", "seccion":"4mm"}
-    # new_line5 = {"posicion": 6, "pols": "2", "page": 1, "lineid": "L5", "description": "Horno", "cabletype": "H05V-K", "seccion":"2,5mm"}
-    # new_line6 = {"posicion": 7, "pols": "2", "page": 1, "lineid": "L6", "description": "Microndas", "cabletype": "H05V-K", "seccion":"2,5mm"}
-
-    # # protections_db.add_protection(new_proteccion9)
-    # protections_db.add_protection(new_proteccion2)
-    # protections_db.add_protection(new_proteccion3)
-    # protections_db.add_protection(new_proteccion4)
-    # protections_db.add_protection(new_proteccion5)
-    # protections_db.add_protection(new_proteccion6)
-    # lines_db.add_line(new_line)
-    # lines_db.add_line(new_line1)
-    # lines_db.add_line(new_line2)
-    # lines_db.add_line(new_line3)
-    # lines_db.add_line(new_line6)
-    # protections.cur.execute(f"DELETE FROM Proteccions WHERE posicion = ?", (3,))
-    # protections.con.commit()

@@ -2,9 +2,7 @@ from flask import Blueprint, render_template, request, session, redirect, url_fo
 from auth_obj import Auth
 from views.elec.models import db, Users, House
 from views.pdf_generation.utils import organize_house
-import io
-import PIL.Image as Image
-from sqlalchemy import delete
+import base64
 
 elec = Blueprint("elec", __name__)
 test_auth = Auth(session, Users, "elec.t_login", "elec.home", request, db)
@@ -51,7 +49,7 @@ def t_new_project():
         return redirect(f"/projects")
     return render_template("new_project.html")
 
-@elec.route("/projects", methods=["GET", "POST"])
+@elec.route("/projects")
 @test_auth.auth
 def t_show_projects():
     user = Users.query.filter_by(id=session.get("id")).first()
@@ -79,19 +77,19 @@ def t_profile():
         db.session.add(user)
         db.session.commit()
     logo = user.logo
-    # logo = base64.b64encode(logo)
-    # print(logo)
-    # image = Image.open(io.BytesIO(logo))
+    logo = base64.b64encode(logo).decode()
+    print(logo)
     return render_template("card.html", name=user.name, email=user.email, logo=logo)
 
 @elec.route("/delate/<house_id>", methods=["POST"])
+@test_auth.auth
 def t_delate_pdf(house_id):
     if request.method == "POST":
         house = db.session.query(House).filter(House.id==house_id).first()
         db.session.delete(house)
         db.session.commit()
-        return redirect(f"/projects")
-    return house_id
+    return redirect(f"/projects")
+
 
 
 @elec.route("/logout")
@@ -103,10 +101,4 @@ def log_out():
 
 @elec.route("/test")
 def t_test():
-    house = House.query.filter_by(id="dabf24e2846349889a0ae673aef9a00e").first()
-    # user = Users.add_user("test1", "test1@email.com", "1234")
-    # db.session.add(user)
-    # db.session.commit()
-    house = house.project()
-    organize_house(house)
-    return "test"
+    return "tests nothing"
