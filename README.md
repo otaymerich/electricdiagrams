@@ -8,7 +8,7 @@ This project is created with Flask
 
 The webpage is created with html 5, using bootstrap
 
-##PYTHON
+## PYTHON
 
 To create the pdf it's used the pymupdf library
 The data for creating the electric schemes is generated in JSON format style
