@@ -2,12 +2,13 @@
 
 The aim of this project is to creat a functional webside where the user can descrive their own house through a form and an electrical diagram is provided in pdf.
 
-This project if created with Flask
+This project is created with Flask
 
 ## HTML
 
-In progress
+The webpage is created with html 5, using bootstrap
 
 ##PYTHON
 
-In progress
+To create the pdf it's used the pymupdf library
+The data for creating the electric schemes is generated in JSON format style
