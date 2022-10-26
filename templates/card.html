@@ -1,0 +1,20 @@
+{%extends "base.html"%}
+
+{%block main%}
+<div class="d-grid gap-3">
+  <div class="card p-2 text-center" style="width: 18rem;">
+    <img src={{logo}} class="card-img-top" alt="Insert logo">
+    <div class="card-body">
+      <h5 class="card-title">{{name}}</h5>
+      <p class="card-text">{{email}}</p>
+      <a href="#" class="btn btn-primary">Edit profile</a>
+    </div>
+  </div>
+<form method="POST" enctype="multipart/form-data">
+  <div class="w-auto input-group">
+    <label for="formFile" class="form-label"></label>
+    <input type="file" class="form-control" id="formFile" name="logo">
+    <button class="btn btn-outline-secondary" type="submit">Button</button>
+  </div>
+</form>
+{%endblock%}
