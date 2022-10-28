@@ -14,7 +14,6 @@ SCRIPT FOR COMPOSING THE PAGES OF THE PDF DOCUMENT
 '''
 
 def draw_cables (page_drawings: list, next_position_x = False, prev_position_x = False, multiple_next = False) -> list:
-    print(next_position_x, prev_position_x)
     '''Create horizontal line for multiple entrances of power'''
     entrance_line = list(filter(lambda protec: protec if protec.position_x==48  else None, page_drawings))
     entrance_line = sorted(list(map(lambda protec: protec.position_y, entrance_line)))
@@ -28,7 +27,6 @@ def draw_cables (page_drawings: list, next_position_x = False, prev_position_x =
         general_line.append(30)
     if prev_position_x:
         general_line.insert(0, 690)
-    print("General line:", general_line)
     if len(general_line) > 1:
         cables_list.extend(shape_horizontal_cable(119, general_line[0], general_line[-1]))
     '''Create horizontal sub_lines'''
@@ -38,7 +36,6 @@ def draw_cables (page_drawings: list, next_position_x = False, prev_position_x =
         sub_lines.append(30)
     if prev_position_x == 220:
         sub_lines.insert(0, 690)
-    print("Sub lines:", sub_lines)
     for protec_y in sub_lines:
         if protec_y - 100 in sub_lines and protec_y - 100 not in general_line:
             cables_list.extend(shape_horizontal_cable(200, protec_y, protec_y-100))
@@ -70,7 +67,7 @@ def draw_page(project: object, page: int) -> tuple:
         prev_protec = None
     draw_list = create_frame()
     if next_protec and prev_protec:
-        draw_list.extend(draw_cables(protec_drawings, next_protec_x.position_x, prev_protec.position_x, multiple_next))
+        draw_list.extend(draw_cables(protec_drawings, next_protec.position_x, prev_protec.position_x, multiple_next))
     elif next_protec and prev_protec == None:
         draw_list.extend(draw_cables(protec_drawings, next_protec.position_x, False , multiple_next))
     elif next_protec == None and prev_protec:

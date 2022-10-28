@@ -14,6 +14,7 @@ def actualize_line_page(line_number: int, page: int) -> tuple: #ASSIGNS THE NEXT
     return line_number, page
 
 def organize_house(house: dict) -> str: #GENERATES THE DICT WITH JSON FORMAT THATS GONA BE USED TO DRAW THE PDF AND SAVES THE DATA IN THE PDF.DB
+    print(house)
     line_number = 1
     page = 1
     main_lines = {}
@@ -45,8 +46,8 @@ def organize_house(house: dict) -> str: #GENERATES THE DICT WITH JSON FORMAT THA
         clean, line_number, page = add_cleaning(cleaning, line_number, page)
         main_lines["cleaning"] = clean
     if "climate_outdoor_unit" in keys or "climate_indoor_unit" in keys:
-        outdoor = house["climate_outdoor_unit"] if "climate_outdoor_unit" in keys else 0
-        indoor = house["climate_indoor_unit"] if "climate_indoor_unit" in keys else 0
+        outdoor = house["climate_outdoor_unit"] if house["climate_outdoor_unit"]  else 0
+        indoor = house["climate_indoor_unit"] if house["climate_indoor_unit"] else 0
         if outdoor != 0 or indoor != 0:
             clima, line_number, page = add_clima(outdoor, indoor, line_number, page)
             for i, k in enumerate(clima.values(), start=1):

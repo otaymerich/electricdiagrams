@@ -37,7 +37,6 @@ class Auth:
         @wraps(func)
         def inner(*args):
             if self.request.method == "POST" and len(self.request.form) == 2: #check the len of the form to distinguish between login or new_user form
-                print(len(self.request.form))
                 user_email = self.request.form["email"]
                 user_pwd = self.encrypt_psw(self.request.form["pwd"])
                 user = self.users.query.filter_by(email=user_email).first()

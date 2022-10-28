@@ -41,7 +41,6 @@ def t_new_project():
         form_values = ["proj_title", "address",  "m2", "floors", "heating_system", "pool", "garden", "fridge", "freezer", "oven", "vitro_hub", "dishwasher", "wash_machine", "dryer", "iron", "climate_outdoor_unit", "climate_indoor_unit", "alarm", "electronics", "domotics", "elec_car", "solar_panels"]
         for name in form_values:
             new_house[name] = True if rf.get(name)=="True" else rf.get(name)
-        print(new_house)
         house = House(session.get("id"), new_house)
         db.session.add(house)
         db.session.commit()
@@ -68,19 +67,16 @@ def t_profile():
         if email:
             user.email = email
         img = request.files.get("logo")
-        print(name, email, img)
         if img:
             img_extension = img.filename.rsplit(".")[-1]
             if img_extension == "png":
                 img.save(f"./static/logos/{session.get('id')}_logo.png")
         db.session.add(user)
         db.session.commit()
-    logo = f"./static/logos/{user.id}_logo.png"
-    print(logo)
-    print("0c628b846f384c529fdd70e63f72eb9e_logo.png")
+    logo = f"./static/logos/{user.id}_logo.png" #Maybe I should add some kind of size regulation
     return render_template("card.html", name=user.name, email=user.email, logo=logo)
 
-@elec.route("/delate/<house_id>", methods=["POST"]) #if i put the decorator @test_auth.auth gives error??
+@elec.route("/delate/<house_id>", methods=["POST"]) #if i put the decorator @test_auth.auth gives error wtf dick
 # @test_auth.auth
 def t_delate_house(house_id):
     if request.method == "POST":
@@ -88,8 +84,6 @@ def t_delate_house(house_id):
         db.session.delete(house)
         db.session.commit()
     return redirect(f"/delate_project/{house_id}")
-
-
 
 @elec.route("/logout")
 def log_out():
