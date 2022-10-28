@@ -78,7 +78,7 @@ def organize_house(house: dict) -> str: #GENERATES THE DICT WITH JSON FORMAT THA
     create_project(data["data"])
     return "Success"
 
-def add_entrance(data):
+def add_entrance(data: dict) -> dict:
     if len(data["lines"])<4:
         ampere = 20
     elif len(data["lines"])<6:
@@ -98,7 +98,7 @@ def add_entrance(data):
             "description": "C",
             "page": 1}
 
-def add_solar():
+def add_solar() -> dict:
     return {"position_x": 48,
         "position_y": 560,
         "protec_type": "M",
@@ -113,7 +113,7 @@ def add_pool(line_number: int, page: int) -> tuple:
     line_number, page = actualize_line_page(line_number, page)
     return pool, line_number, page
 
-def add_generallines(floors, m2, line_number, page):
+def add_generallines(floors: int, m2: int, line_number: int, page: int) -> tuple:
     if floors == 1 and m2 > 300:
         n = 2
     else:
@@ -129,7 +129,7 @@ def add_generallines(floors, m2, line_number, page):
         line_number, page = actualize_line_page(line_number, page)
     return general_lines, line_number, page
 
-def add_garden(line_number, page):
+def add_garden(line_number: int, page: int) -> tuple:
     garden = create_head_proteccion(2, "30mA\nTipo AC", line_number, page)
     garden["sub_lines"].update(create_sub_line(0, 2, 10, "Luz exterior", "RZ1-K", "1,5mm", line_number, page))
     line_number, page = actualize_line_page(line_number, page)
@@ -138,7 +138,7 @@ def add_garden(line_number, page):
     return garden, line_number, page
 
 
-def add_cleaning(cleaning: list, line_number, page):
+def add_cleaning(cleaning: list, line_number: int, page: int) -> tuple:
     clean = create_head_proteccion(2, "30mA\nTipo AC", line_number, page)
     for n, i in enumerate(cleaning):
         if i == "iron":
@@ -151,7 +151,7 @@ def add_cleaning(cleaning: list, line_number, page):
         line_number, page = actualize_line_page(line_number, page)
     return clean, line_number, page
 
-def add_heating_system(system: str, line_number, page):
+def add_heating_system(system: str, line_number: int, page: int) -> tuple:
     heating_system = create_head_proteccion(2, "30mA\nTipo AC", line_number, page)
     if system == "Boiler":
         heating_system["sub_lines"].update(create_sub_line(0, 2, 16, "Caldera", "H07Z1-K", "2,5mm", line_number, page))
@@ -163,7 +163,7 @@ def add_heating_system(system: str, line_number, page):
     line_number, page = actualize_line_page(line_number, page)
     return heating_system, line_number, page
 
-def add_clima(outdoor: int, indoor: int, line_number: int, page: int):
+def add_clima(outdoor: int, indoor: int, line_number: int, page: int) -> tuple:
     clima_lines = {}
     if outdoor != 0:
         clima_lines[1] = create_head_proteccion(2, "30mA\nTipo SI", line_number, page)
@@ -207,7 +207,7 @@ def add_clima(outdoor: int, indoor: int, line_number: int, page: int):
             line_number, page = actualize_line_page(line_number, page)
     return clima_lines, line_number, page
 
-def add_kitchen_1(elements: list, line_number: int, page: int):
+def add_kitchen_1(elements: list, line_number: int, page: int) -> tuple:
     kitchen = create_head_proteccion(2, "30mA\nTipo SI", line_number, page)
     for n, element in enumerate(elements):
         if element == "fridge":
@@ -218,7 +218,7 @@ def add_kitchen_1(elements: list, line_number: int, page: int):
         line_number, page = actualize_line_page(line_number, page)
     return kitchen, line_number, page
 
-def add_kitchen_2(elements: list, line_number:int, page: int):
+def add_kitchen_2(elements: list, line_number:int, page: int) -> tuple:
     kitchen = create_head_proteccion(2, "30mA\nTipo AC", line_number, page)
     for n, element in enumerate(elements):
         if element == "oven":
@@ -228,13 +228,13 @@ def add_kitchen_2(elements: list, line_number:int, page: int):
         line_number, page = actualize_line_page(line_number, page)
     return kitchen, line_number, page
         
-def add_vitro(line_number, page):
+def add_vitro(line_number: int, page: int) -> tuple:
     vitro = create_head_proteccion(4, "30mA\nTipo SI", line_number, page)
     vitro["sub_lines"].update(create_sub_line(0, 4, 16, "Vitrocerámica", "RZ1-K", "2,5mm", line_number, page))
     line_number, page = actualize_line_page(line_number, page)
     return vitro, line_number, page
 
-def add_extras(elements, line_number, page):
+def add_extras(elements: list, line_number: int, page: int) -> tuple:
     extra = create_head_proteccion(2, "30mA\nTipo SI", line_number, page)
     for n, element in enumerate(elements):
         if element == "alarm":
@@ -246,13 +246,13 @@ def add_extras(elements, line_number, page):
         line_number, page = actualize_line_page(line_number, page)
     return extra, line_number, page
 
-def add_car(line_number, page):
+def add_car(line_number: int, page: int) -> tuple:
     car =   create_head_proteccion(4, "30mA\nTipo SI", line_number, page)
     car["sub_lines"].update(create_sub_line(0, 4, 20, "Carg. coche eléctrico", "RZ1-K", "4mm", line_number, page))
     line_number, page = actualize_line_page(line_number, page)
     return car, line_number, page
 
-def create_head_proteccion(pols: int, description: str, line_number, page):
+def create_head_proteccion(pols: int, description: str, line_number: int, page: int) -> dict:
     head_proteccion =  {"head_proteccion": {
                 "position_x": 139,
                 "position_y": 760-100*line_number,
@@ -265,7 +265,7 @@ def create_head_proteccion(pols: int, description: str, line_number, page):
     }
     return head_proteccion
 
-def create_sub_line(n_subline: int, pols: int, ampere: int, line_description: str, cable: str, seccion: str, line_number: int, page: int):
+def create_sub_line(n_subline: int, pols: int, ampere: int, line_description: str, cable: str, seccion: str, line_number: int, page: int) -> dict:
     return {n_subline:{
                 "proteccion":{
                     "position_x": 220,
@@ -285,7 +285,7 @@ def create_sub_line(n_subline: int, pols: int, ampere: int, line_description: st
                     "seccion": seccion}}
     }
 
-def create_project(data: dict):
+def create_project(data: dict) -> str: 
     proj_desc = data["proj_description"]
     new_project = Projects(proj_desc["project_id"],
                         proj_desc["house_id"],
@@ -298,8 +298,9 @@ def create_project(data: dict):
     for entrance in data["power_entrance"].values():
         create_proteccion(entrance, proj_desc["project_id"])
     create_lines(data["lines"], proj_desc["project_id"])
+    return "Success" #Useless confirmation of everything went alright
 
-def create_lines(lines: dict, proj_id: str):
+def create_lines(lines: dict, proj_id: str) -> str:
     for line in lines.values():
         create_proteccion(line["head_proteccion"], proj_id)
         for sub_line in line["sub_lines"].values():
@@ -316,8 +317,9 @@ def create_lines(lines: dict, proj_id: str):
                             )
             db.session.add(new_line)
             db.session.commit()
+    return "Success" #Useless confirmation of everything went alright
 
-def create_proteccion(proteccion: dict, proj_id: str):
+def create_proteccion(proteccion: dict, proj_id: str) -> str:
     new_protec = Proteccions(Proteccions.gen_id(),
                     proj_id,
                     proteccion["position_x"],
@@ -330,4 +332,5 @@ def create_proteccion(proteccion: dict, proj_id: str):
                     )
     db.session.add(new_protec)
     db.session.commit()
+    return "Success" #Useless confirmation of everything went alright
 

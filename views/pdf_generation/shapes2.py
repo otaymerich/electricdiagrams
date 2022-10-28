@@ -1,26 +1,25 @@
 import fitz
 from fitz import Point, Rect
-from views.pdf_generation.shapes import text_line,create_frame, shape_singlephase_cable, shape_threephase_cable, text_frame,shape_diferencial, shape_horizontal_cable, shape_line, shape_magneto, shape_rectangle, add_textbox
+from views.pdf_generation.shapes import text_line,create_frame, shape_singlephase_cable, shape_threephase_cable, text_frame,shape_diferencial, shape_horizontal_cable, shape_magneto
 from tkinter import filedialog
-from views.pdf_generation.models import db, Proteccions, Projects, Lines
+from views.pdf_generation.models import Proteccions, Lines
 from views.elec.models import Users
 from flask import session
 import os.path
-from PIL import Image
-import io
+
 
 '''
 SCRIPT FOR COMPOSING THE PAGES OF THE PDF DOCUMENT
 '''
 
 def draw_cables (page_drawings: list, next_position_x = False, prev_position_x = False, multiple_next = False) -> list:
-    '''Create horizontal line for multiple entrances of power'''
+    '''Create horizontal line for multiple entrances of power at level x=48'''
     entrance_line = list(filter(lambda protec: protec if protec.position_x==48  else None, page_drawings))
     entrance_line = sorted(list(map(lambda protec: protec.position_y, entrance_line)))
     cables_list = []
     if len(entrance_line) > 1:
         cables_list.extend(shape_horizontal_cable(99, entrance_line[0], entrance_line[-1]))
-    '''Create general horizontal line'''
+    '''Create general horizontal line at x=139'''
     general_line = list(filter(lambda protec: protec if protec.position_x==139  else None, page_drawings))
     general_line = sorted(list(map(lambda protec: protec.position_y, general_line)), reverse=True)
     if next_position_x == 139 or multiple_next:
@@ -29,7 +28,7 @@ def draw_cables (page_drawings: list, next_position_x = False, prev_position_x =
         general_line.insert(0, 690)
     if len(general_line) > 1:
         cables_list.extend(shape_horizontal_cable(119, general_line[0], general_line[-1]))
-    '''Create horizontal sub_lines'''
+    '''Create horizontal sub_lines at x=220'''
     sub_lines = list(filter(lambda protec: protec if protec.position_x==220 else None, page_drawings))
     sub_lines = sorted(list(map(lambda protec: protec.position_y, sub_lines)), reverse=True)
     if next_position_x == 220 or multiple_next:
@@ -74,8 +73,7 @@ def draw_page(project: object, page: int) -> tuple:
         draw_list.extend(draw_cables(protec_drawings, False, prev_protec.position_x, multiple_next))
     else:
         draw_list.extend(draw_cables(protec_drawings))
-    text_list = text_frame(project.title, project.author, page)
-
+    text_list = text_frame(project.title, project.author, page, project.address)
     for protec in protec_drawings:
         x = protec.position_x
         y = protec.position_y
@@ -161,7 +159,7 @@ def create_pdf(project: object):
             elif type(textbox[0]) == Rect:
                 outpage.insert_textbox(textbox[0], textbox[1], fontsize=9.5, fontname='helv', fontfile=None, color=textbox[2], fill=None, render_mode=0, border_width=1, encoding='utf8', expandtabs=8, align=1, rotate=90, morph=None, stroke_opacity=1, fill_opacity=1, oc=0, overlay=True)
     '''
-    insert company logo
+    insert company logo saved in statics in case the user has uploaded it
     #'''
     if os.path.exists(f"static/logos/{user.id}_logo.png"):
         rect = fitz.Rect(537,612,583,830)

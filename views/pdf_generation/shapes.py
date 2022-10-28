@@ -92,7 +92,7 @@ def create_frame() -> list:
     draw_list.extend(shape_line(535,10,535,832))
     return draw_list
 
-def text_frame(title, author, page) -> list:
+def text_frame(title: str, author: str, page: int, address: str) -> list:
     text_list = add_textbox(448, 827, "ID Línea", (0,0,0))
     text_list.extend(add_textbox(478, 827, "Descripción", (0,0,0)))
     text_list.extend(add_textbox(508, 827, "Tipo de cable", (0,0,0)))
@@ -100,7 +100,9 @@ def text_frame(title, author, page) -> list:
     text_list.extend(add_textbox(578, 50, f"Pg. {page}", (0,0,0)))
     text_list.append((Rect(Point(540,110),Point(573, 610)), title, (0,0,0)))
     text_list.extend(add_textbox(568, 600, f"Autor: {author}", (0,0,0)))
-    text_list.extend(add_textbox(580, 600, data(), (0,0,0)))
+    text_list.extend(add_textbox(580, 600, f"Dirección: {address}", (0,0,0)))
+
+    text_list.extend(add_textbox(580, 245, data(), (0,0,0)))
     return text_list
 
 def data() -> str:

@@ -73,11 +73,11 @@ def t_profile():
                 img.save(f"./static/logos/{session.get('id')}_logo.png")
         db.session.add(user)
         db.session.commit()
-    logo = f"./static/logos/{user.id}_logo.png" #Maybe I should add some kind of size regulation
+    logo = f"./static/logos/{user.id}_logo.png" #Maybe I should add some kind of size regulation for the card not to be gigantic
     return render_template("card.html", name=user.name, email=user.email, logo=logo)
 
-@elec.route("/delate/<house_id>", methods=["POST"]) #if i put the decorator @test_auth.auth gives error wtf dick
-# @test_auth.auth
+@elec.route("/delate/<house_id>", methods=["POST"])
+@test_auth.auth
 def t_delate_house(house_id):
     if request.method == "POST":
         house = db.session.query(House).filter(House.id==house_id).first()

@@ -17,13 +17,13 @@ class Auth:
 
     def auth(self, func):
         @wraps(func)
-        def inner(*args):
+        def inner(*args, **kwargs):
             session_id = self.session.get("id")
             session_token = self.session.get("token")
             user = self.users.query.filter_by(id=session_id).first()
             if user:
                 if user.token == session_token:
-                    return func(*args)
+                    return func(*args, **kwargs)
             return redirect(url_for(self.url_redirect))
         return inner
 
