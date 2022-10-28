@@ -80,14 +80,14 @@ def t_profile():
     print("0c628b846f384c529fdd70e63f72eb9e_logo.png")
     return render_template("card.html", name=user.name, email=user.email, logo=logo)
 
-@elec.route("/delate/<house_id>", methods=["POST"])
-@test_auth.auth
-def t_delate_pdf(house_id):
+@elec.route("/delate/<house_id>", methods=["POST"]) #if i put the decorator @test_auth.auth gives error??
+# @test_auth.auth
+def t_delate_house(house_id):
     if request.method == "POST":
         house = db.session.query(House).filter(House.id==house_id).first()
         db.session.delete(house)
         db.session.commit()
-    return redirect(f"/projects")
+    return redirect(f"/delate_project/{house_id}")
 
 
 

@@ -13,7 +13,7 @@ import io
 SCRIPT FOR COMPOSING THE PAGES OF THE PDF DOCUMENT
 '''
 
-def draw_cables (page_drawings: list, next_position_x = False, prev_position_x = False) -> list:
+def draw_cables (page_drawings: list, next_position_x = False, prev_position_x = False, multiple_next = False) -> list:
     print(next_position_x, prev_position_x)
     '''Create horizontal line for multiple entrances of power'''
     entrance_line = list(filter(lambda protec: protec if protec.position_x==48  else None, page_drawings))
@@ -24,20 +24,21 @@ def draw_cables (page_drawings: list, next_position_x = False, prev_position_x =
     '''Create general horizontal line'''
     general_line = list(filter(lambda protec: protec if protec.position_x==139  else None, page_drawings))
     general_line = sorted(list(map(lambda protec: protec.position_y, general_line)), reverse=True)
-    if next_position_x == 139:
+    if next_position_x == 139 or multiple_next:
         general_line.append(30)
     if prev_position_x:
         general_line.insert(0, 690)
+    print("General line:", general_line)
     if len(general_line) > 1:
         cables_list.extend(shape_horizontal_cable(119, general_line[0], general_line[-1]))
     '''Create horizontal sub_lines'''
     sub_lines = list(filter(lambda protec: protec if protec.position_x==220 else None, page_drawings))
     sub_lines = sorted(list(map(lambda protec: protec.position_y, sub_lines)), reverse=True)
-    if next_position_x == 220:
+    if next_position_x == 220 or multiple_next:
         sub_lines.append(30)
     if prev_position_x == 220:
         sub_lines.insert(0, 690)
-    print(sub_lines)
+    print("Sub lines:", sub_lines)
     for protec_y in sub_lines:
         if protec_y - 100 in sub_lines and protec_y - 100 not in general_line:
             cables_list.extend(shape_horizontal_cable(200, protec_y, protec_y-100))
@@ -52,18 +53,28 @@ def draw_page(project: object, page: int) -> tuple:
     Drawing proteccions
     '''
     protec_drawings = list(Proteccions.query.filter_by(project_id=project.id, page=page).all())
-    next_protec = Proteccions.query.filter_by(project_id=project.id, page=page+1, position_x=139).first()
+    next_protec_y = Proteccions.query.filter_by(project_id=project.id, page=page+1, position_y=660).first()
+    next_protec_x = Proteccions.query.filter_by(project_id=project.id, page=page+1, position_x=139).first()
+    if next_protec_x and next_protec_y and next_protec_x != next_protec_y:
+        multiple_next = True
+        next_protec = next_protec_y
+    elif next_protec_y:
+        next_protec = next_protec_y
+        multiple_next = False
+    else:
+        next_protec = next_protec_x
+        multiple_next = False
     if page > 1:
         prev_protec = Proteccions.query.filter_by(project_id=project.id, page=page, position_y=660).first()
     else:
         prev_protec = None
     draw_list = create_frame()
     if next_protec and prev_protec:
-        draw_list.extend(draw_cables(protec_drawings, next_protec.position_x, prev_protec.position_x))
+        draw_list.extend(draw_cables(protec_drawings, next_protec_x.position_x, prev_protec.position_x, multiple_next))
     elif next_protec and prev_protec == None:
-        draw_list.extend(draw_cables(protec_drawings, next_protec.position_x))
+        draw_list.extend(draw_cables(protec_drawings, next_protec.position_x, False , multiple_next))
     elif next_protec == None and prev_protec:
-        draw_list.extend(draw_cables(protec_drawings, False, prev_protec.position_x))
+        draw_list.extend(draw_cables(protec_drawings, False, prev_protec.position_x, multiple_next))
     else:
         draw_list.extend(draw_cables(protec_drawings))
     text_list = text_frame(project.title, project.author, page)
