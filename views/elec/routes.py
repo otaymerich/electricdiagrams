@@ -13,7 +13,7 @@ HOME PAGE
 @elec.route("/", methods=["GET", "POST"])
 @test_auth.auth
 def home():
-    return render_template("base.html")
+    return render_template("base.html", instructions = True)
 
 '''
 LOGIN/LOGOUT
@@ -30,7 +30,7 @@ def t_login():
             db.session.commit()
         else:
             return render_template("login.html", message="**The user you tryed to create already exists**")
-    return render_template("login.html")
+    return render_template("login.html", notloged = True)
 
 @elec.route("/newproject", methods=["GET", "POST"])
 @test_auth.auth
