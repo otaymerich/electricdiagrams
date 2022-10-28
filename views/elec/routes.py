@@ -72,13 +72,12 @@ def t_profile():
         if img:
             img_extension = img.filename.rsplit(".")[-1]
             if img_extension == "png":
-                logo = img.read()
-                user.logo = logo
+                img.save(f"./static/logos/{session.get('id')}_logo.png")
         db.session.add(user)
         db.session.commit()
-    logo = user.logo
-    logo = base64.b64encode(logo).decode()
+    logo = f"./static/logos/{user.id}_logo.png"
     print(logo)
+    print("0c628b846f384c529fdd70e63f72eb9e_logo.png")
     return render_template("card.html", name=user.name, email=user.email, logo=logo)
 
 @elec.route("/delate/<house_id>", methods=["POST"])

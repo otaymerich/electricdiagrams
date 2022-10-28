@@ -9,7 +9,6 @@ class Users(db.Model):
     email = db.Column(db.String(100), unique=True)
     pwd = db.Column(db.String(40))
     token = db.Column(db.String(43), nullable=True)
-    logo = db.Column(db.BLOB, nullable=True)
     houses = db.relationship("House", backref="houses", lazy=True)
 
     @staticmethod

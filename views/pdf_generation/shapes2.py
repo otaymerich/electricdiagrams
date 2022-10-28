@@ -5,6 +5,9 @@ from tkinter import filedialog
 from views.pdf_generation.models import db, Proteccions, Projects, Lines
 from views.elec.models import Users
 from flask import session
+import os.path
+from PIL import Image
+import io
 
 '''
 SCRIPT FOR COMPOSING THE PAGES OF THE PDF DOCUMENT
@@ -97,9 +100,10 @@ def create_pdf(project: object):
     '''
     open document
     '''
+    user = Users.query.filter_by(id=session.get("id")).first()
     doc = fitz.open()
     for page in range(project.n_pg):
-        page = page+1
+        page = page + 1
         outpage = doc.new_page(width=595, height=842)
         shape = outpage.new_shape()
         '''
@@ -151,13 +155,11 @@ def create_pdf(project: object):
     '''
     insert company logo
     #'''
-    for page in doc:
-        user = Users.query.filter_by(id=session.get("id")).first()
-        if user.logo:
-            rect = fitz.Rect(537,612,583,830)
-            img = user.logo
-            img_xref = 0
-            page.insert_image(rect, stream=img, xref=img_xref, rotate=90, keep_proportion=True)
+    if os.path.exists(f"static/logos/{user.id}_logo.png"):
+        rect = fitz.Rect(537,612,583,830)
+        img = open(f"static/logos/{user.id}_logo.png", "rb").read()
+        for page in doc:
+            page.insert_image(rect, stream=img, xref=0, rotate=90, keep_proportion=True) #It dosn't keep the proportion this sucker, check
 
     file_path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("pdf file","*.pdf")])
     if file_path:
