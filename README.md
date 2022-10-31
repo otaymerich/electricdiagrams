@@ -31,9 +31,10 @@ HTML files:
  - new_project: shows form for the creation of a new project
  - table.html: displays all the projects of the user logged, allows to download them in pdf format or errase them
 
-# Statics/logos
+# Statics
 
-Static folder to save the logos imgaes for each user.
+ - /logos: Static folder to save the logos imgaes for each user.
+ - /pdfs: Static folder to save the pdf documents when the user downloads. This folder is automatically cleared. 
 
 # Views
 
