@@ -1,4 +1,4 @@
-from fitz import Point, Rect, open, __doc__
+from fitz import Point, Rect, open as op, __doc__
 from views.pdf_generation.shapes import text_line,create_frame, shape_singlephase_cable, shape_threephase_cable, text_frame,shape_diferencial, shape_horizontal_cable, shape_magneto
 from tkinter import filedialog
 from views.pdf_generation.models import Proteccions, Lines
@@ -106,7 +106,7 @@ def create_pdf(project: object):
     open document
     '''
     user = Users.query.filter_by(id=session.get("id")).first()
-    doc = open()
+    doc = op()
     for page in range(project.n_pg):
         page = page + 1
         outpage = doc.new_page(width=595, height=842)
