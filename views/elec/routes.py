@@ -54,7 +54,7 @@ def t_new_project():
 def t_show_projects():
     for f in os.listdir("./static/pdfs"):
         if os.path.isfile(f"./static/pdfs/{f}"):
-            os.remove(f"./static/pdf/{f}")
+            os.remove(f"./static/pdfs/{f}")
     user = Users.query.filter_by(id=session.get("id")).first()
     houses = list(map(lambda roomie: roomie.public(), user.houses))
     return render_template("table.html", elements=houses)
