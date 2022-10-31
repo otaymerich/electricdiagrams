@@ -1,8 +1,9 @@
+from genericpath import isfile
+import os
 from flask import Blueprint, render_template, request, session, redirect, url_for, make_response
 from auth_obj import Auth
 from views.elec.models import db, Users, House
 from views.pdf_generation.utils import organize_house
-import base64
 
 elec = Blueprint("elec", __name__)
 test_auth = Auth(session, Users, "elec.t_login", "elec.home", request, db)
@@ -51,6 +52,9 @@ def t_new_project():
 @elec.route("/projects")
 @test_auth.auth
 def t_show_projects():
+    for f in os.listdir("./static/pdfs"):
+        if os.path.isfile(f"./static/pdfs/{f}"):
+            os.remove(f"./static/pdf/{f}")
     user = Users.query.filter_by(id=session.get("id")).first()
     houses = list(map(lambda roomie: roomie.public(), user.houses))
     return render_template("table.html", elements=houses)

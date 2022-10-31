@@ -1,7 +1,8 @@
-from flask import Blueprint, request, redirect
+from flask import Blueprint, request, redirect, send_file
 from views.pdf_generation.models import Lines, Projects, Proteccions, db
 from views.pdf_generation.shapes2 import create_pdf
 from views.elec.routes import test_auth
+import os
 
 pdf = Blueprint("pdf", __name__)
 
@@ -10,7 +11,9 @@ pdf = Blueprint("pdf", __name__)
 def t_create_pdf(house_id: str):
     if request.method == "POST":
         project = Projects.query.filter_by(house_id=house_id).first()
-        create_pdf(project)
+        if not os.path.exists(f"./static/pdfs/{project.id}_pdf.pdf"):
+            create_pdf(project)
+        return send_file(f"./static/pdfs/{project.id}_pdf.pdf", as_attachment=True)
     return redirect(f"/projects")
 
 @pdf.route("/delate_project/<house_id>")

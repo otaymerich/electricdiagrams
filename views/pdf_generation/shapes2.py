@@ -1,5 +1,4 @@
-import fitz
-from fitz import Point, Rect
+from fitz import Point, Rect, open, __doc__
 from views.pdf_generation.shapes import text_line,create_frame, shape_singlephase_cable, shape_threephase_cable, text_frame,shape_diferencial, shape_horizontal_cable, shape_magneto
 from tkinter import filedialog
 from views.pdf_generation.models import Proteccions, Lines
@@ -107,7 +106,7 @@ def create_pdf(project: object):
     open document
     '''
     user = Users.query.filter_by(id=session.get("id")).first()
-    doc = fitz.open()
+    doc = open()
     for page in range(project.n_pg):
         page = page + 1
         outpage = doc.new_page(width=595, height=842)
@@ -162,16 +161,13 @@ def create_pdf(project: object):
     insert company logo saved in statics in case the user has uploaded it
     #'''
     if os.path.exists(f"static/logos/{user.id}_logo.png"):
-        rect = fitz.Rect(537,612,583,830)
+        rect = Rect(537,612,583,830)
         img = open(f"static/logos/{user.id}_logo.png", "rb").read()
         for page in doc:
             page.insert_image(rect, stream=img, xref=0, rotate=90, keep_proportion=True) #It dosn't keep the proportion this sucker, check
-
-    file_path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("pdf file","*.pdf")])
-    if file_path:
-        doc.save(file_path)
+    doc.save(f"./static/pdfs/{project.id}_pdf.pdf")
     doc.close()
-    print(fitz.__doc__)
+    print(__doc__)
 
 
 if __name__ == "__main__":
